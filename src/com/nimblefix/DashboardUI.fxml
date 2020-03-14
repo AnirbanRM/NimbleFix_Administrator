@@ -2,6 +2,7 @@
 
 <?import javafx.scene.canvas.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
@@ -34,18 +35,31 @@
             <Canvas fx:id="canvas" height="619.0" onMouseClicked="#place_inventory" width="1000.0" />
          </content>
       </ScrollPane>
-      <ListView fx:id="floor_list" layoutY="221.0" prefHeight="481.0" prefWidth="198.0" />
-      <Label layoutX="11.0" layoutY="197.0" text="Floors" />
-      <Button fx:id="place_inventory_button" layoutX="9.0" layoutY="35.0" mnemonicParsing="false" onMouseClicked="#add_inventory" prefHeight="25.0" prefWidth="179.0" text="Place Inventory" />
-      <Button fx:id="modify_inventory_button" layoutX="8.0" layoutY="66.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="179.0" text="Modify Inventory" />
-      <Button fx:id="delete_inventory_button" layoutX="8.0" layoutY="97.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="179.0" text="Delete Inventory" />
-      <Button fx:id="Floor_Add_button" layoutX="132.0" layoutY="192.0" mnemonicParsing="false" onMouseClicked="#add_Floor" prefHeight="17.0" prefWidth="25.0" text="+" />
-      <Button layoutX="164.0" layoutY="192.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="25.0" text="-" />
-      <TextField layoutX="9.0" layoutY="149.0" prefHeight="25.0" prefWidth="179.0" promptText="Organization Name" />
-      <Label fx:id="current_floor_string" layoutX="213.0" layoutY="34.0" prefHeight="17.0" prefWidth="348.0" text="No floor selected">
+      <ListView fx:id="floor_list" layoutY="264.0" prefHeight="438.0" prefWidth="199.0" />
+      <Label layoutX="11.0" layoutY="239.0" text="Floors" />
+      <Button fx:id="place_inventory_button" layoutX="9.0" layoutY="77.0" mnemonicParsing="false" onMouseClicked="#add_inventory" prefHeight="25.0" prefWidth="179.0" text="Place Inventory" />
+      <Button fx:id="delete_inventory_button" layoutX="10.0" layoutY="108.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="179.0" text="Delete Inventory" />
+      <Button fx:id="Floor_Add_button" layoutX="132.0" layoutY="234.0" mnemonicParsing="false" onMouseClicked="#add_Floor" prefHeight="17.0" prefWidth="25.0" text="+" />
+      <Button layoutX="164.0" layoutY="234.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="25.0" text="-" />
+      <TextField layoutX="10.0" layoutY="33.0" prefHeight="25.0" prefWidth="295.0" promptText="Organization Name" />
+      <Label fx:id="current_floor_string" layoutX="321.0" layoutY="32.0" prefHeight="27.0" prefWidth="368.0" text="No floor selected">
          <font>
             <Font name="System Bold" size="18.0" />
          </font>
       </Label>
+      <TitledPane fx:id="about_inventory_pane" alignment="CENTER_RIGHT" animated="false" expanded="false" layoutX="821.0" layoutY="34.0" prefHeight="27.0" prefWidth="368.0" text="About Inventory">
+         <content>
+            <Pane prefHeight="180.0" prefWidth="366.0">
+               <children>
+                  <Label fx:id="about_id" layoutX="14.0" layoutY="14.0" prefHeight="17.0" prefWidth="226.0" text="Unique ID :  ABC123BCD123" />
+                  <ImageView fx:id="about_qr" fitHeight="120.0" fitWidth="112.0" layoutX="233.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" />
+                  <TextField fx:id="about_title" layoutX="14.0" layoutY="43.0" prefHeight="25.0" prefWidth="207.0" promptText="Title" />
+                  <TextArea fx:id="about_desc" layoutX="14.0" layoutY="78.0" prefHeight="97.0" prefWidth="207.0" promptText="Description" />
+                  <Button fx:id="about_save" layoutX="234.0" layoutY="149.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="111.0" text="Save Image" />
+               </children></Pane>
+         </content>
+      </TitledPane>
+      <CheckBox fx:id="auto_exp_check" layoutX="712.0" layoutY="39.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="98.0" text="Auto Expand" />
+      <Button layoutX="10.0" layoutY="150.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="179.0" text="Manage Inventory Category" />
    </children>
 </Pane>

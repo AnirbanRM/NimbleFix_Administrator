@@ -11,12 +11,12 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
-import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
@@ -39,12 +39,16 @@ public class Dashboard implements Initializable {
 
     boolean adding_mode = false;
 
+    @FXML CheckBox auto_exp_check;
     @FXML Canvas canvas;
     @FXML ListView floor_list;
     @FXML ScrollPane canvas_container;
-    @FXML Label current_floor_string;
-
-    @FXML Button place_inventory_button,modify_inventory_button, delete_inventory_button;
+    @FXML Label current_floor_string,about_id;
+    @FXML TitledPane about_inventory_pane;
+    @FXML TextField about_title;
+    @FXML TextArea about_desc;
+    @FXML ImageView about_qr;
+    @FXML Button place_inventory_button, delete_inventory_button,about_save;
 
     public void add_Map(ActionEvent actionEvent) throws Exception{
         if(current_selected_floor==null) {
@@ -76,14 +80,12 @@ public class Dashboard implements Initializable {
             return;
         }
         if(!adding_mode) {
-            modify_inventory_button.setDisable(true);
             delete_inventory_button.setDisable(true);
             place_inventory_button.setText("Exit");
             adding_mode = true;
             canvas.setCursor(Cursor.CROSSHAIR);
         }
         else if(adding_mode){
-            modify_inventory_button.setDisable(false);
             delete_inventory_button.setDisable(false);
             place_inventory_button.setText("Place Inventory");
             adding_mode=false;
@@ -94,9 +96,19 @@ public class Dashboard implements Initializable {
 
     public void place_inventory(MouseEvent mouseEvent) {
         if(adding_mode){
-            current_selected_floor.addInventoryItem(new InventoryItem(null,org.getUniqueID(),"Empty Description",mouseEvent.getX(),mouseEvent.getY()));
+            InventoryItem i = new InventoryItem(null,org.getUniqueID(),"Untitled Item","No description",mouseEvent.getX(),mouseEvent.getY());
+            loadintoAboutInventory(i);
+            if(auto_exp_check.isSelected())
+                about_inventory_pane.setExpanded(true);
+            current_selected_floor.addInventoryItem(i);
             redraw();
         }
+    }
+
+    private void loadintoAboutInventory(InventoryItem i){
+        about_id.setText("Unique ID : "+i.getId());
+        about_title.setText(i.getTitle());
+        about_desc.setText(i.getDescription());
     }
 
     @Override
@@ -123,6 +135,16 @@ public class Dashboard implements Initializable {
             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
                 if(newValue==null)return;
                 set_current_floor(newValue.toString());
+            }
+        });
+
+        about_inventory_pane.expandedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                if(newValue)
+                    about_inventory_pane.setPrefHeight(214);
+                else if(!newValue)
+                    about_inventory_pane.setPrefHeight(27);
             }
         });
 

@@ -1,9 +1,9 @@
 package com.nimblefix.core;
 
-import sun.util.calendar.LocalGregorianCalendar;
+import com.sun.org.apache.xml.internal.security.algorithms.MessageDigestAlgorithm;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class Organization {
 
@@ -28,7 +28,8 @@ public class Organization {
     }
 
     public String getUniqueID(){
-        return String.valueOf(LocalDateTime.now().hashCode());
+        Calendar i = Calendar.getInstance();
+        return ""+i.get(Calendar.DATE)+i.get(Calendar.MONTH)+i.get(Calendar.YEAR)+i.get(Calendar.HOUR)+i.get(Calendar.MINUTE)+i.get(Calendar.SECOND)+i.get(Calendar.MILLISECOND);
     }
 
     public void addFloor(OrganizationalFloors floor){

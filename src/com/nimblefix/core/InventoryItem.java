@@ -3,31 +3,20 @@ package com.nimblefix.core;
 
 import com.google.zxing.WriterException;
 import com.google.zxing.qrcode.QRCodeWriter;
-import com.sun.prism.Graphics;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
-import javafx.scene.image.WritablePixelFormat;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
-import sun.font.FontFamily;
 
 import com.google.zxing.BarcodeFormat;
-import com.google.zxing.EncodeHintType;
-import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
-import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -84,24 +73,66 @@ public class InventoryItem {
 
     String oui;
     String id;
+    String title;
     String description;
     Location location;
     ArrayList<HistoryItem> History;
 
-    public InventoryItem(String OUI, String ID, String DESCRIPTION, double X, double Y){
+    public InventoryItem(String OUI, String ID, String title, String description, double X, double Y){
         this.oui=OUI;
         this.id=ID;
-        this.description=DESCRIPTION;
+        this.title = title;
+        this.description=description;
         location = new Location(X,Y);
         this.History = new ArrayList<HistoryItem>();
     }
 
-    public void clearHistory(){
-        History.clear();
+    public String getOui() {
+        return oui;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     public Location getLocation(){
         return this.location;
+    }
+
+    public void setOui(String oui) {
+        this.oui = oui;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
+    public void setHistory(ArrayList<HistoryItem> history) {
+        History = history;
+    }
+
+    public void clearHistory(){
+        History.clear();
     }
 
     public void addtoHistory(Date date, String REMARKS, String RESULT){
