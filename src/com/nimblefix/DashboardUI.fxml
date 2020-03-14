@@ -11,8 +11,7 @@
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
-              <MenuItem mnemonicParsing="false" text="New Floor" />
-                  <MenuItem mnemonicParsing="false" text="Attach/Modify Map" />
+                  <MenuItem mnemonicParsing="false" onAction="#add_Map" text="Attach/Modify Map" />
                   <MenuItem mnemonicParsing="false" text="Remove Map" />
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem mnemonicParsing="false" text="Save to Local Drive" />
@@ -38,8 +37,8 @@
       <ListView fx:id="floor_list" layoutY="221.0" prefHeight="481.0" prefWidth="198.0" />
       <Label layoutX="11.0" layoutY="197.0" text="Floors" />
       <Button fx:id="place_inventory_button" layoutX="9.0" layoutY="35.0" mnemonicParsing="false" onMouseClicked="#add_inventory" prefHeight="25.0" prefWidth="179.0" text="Place Inventory" />
-      <Button layoutX="8.0" layoutY="66.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="179.0" text="Modify Inventory" />
-      <Button layoutX="8.0" layoutY="97.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="179.0" text="Delete Inventory" />
+      <Button fx:id="modify_inventory_button" layoutX="8.0" layoutY="66.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="179.0" text="Modify Inventory" />
+      <Button fx:id="delete_inventory_button" layoutX="8.0" layoutY="97.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="179.0" text="Delete Inventory" />
       <Button fx:id="Floor_Add_button" layoutX="132.0" layoutY="192.0" mnemonicParsing="false" onMouseClicked="#add_Floor" prefHeight="17.0" prefWidth="25.0" text="+" />
       <Button layoutX="164.0" layoutY="192.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="25.0" text="-" />
       <TextField layoutX="9.0" layoutY="149.0" prefHeight="25.0" prefWidth="179.0" promptText="Organization Name" />

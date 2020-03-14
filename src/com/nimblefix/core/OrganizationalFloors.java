@@ -5,6 +5,8 @@ import java.util.ArrayList;
 public class OrganizationalFloors {
 
     String floorID;
+    byte[] background_map=null;
+
     ArrayList<InventoryItem> inventories = new ArrayList<InventoryItem>();
 
     public OrganizationalFloors(String floorID){
@@ -13,6 +15,14 @@ public class OrganizationalFloors {
 
     public String getFloorID() {
         return floorID;
+    }
+
+    public void setBackground_map(byte[] background_map) {
+        this.background_map = background_map;
+    }
+
+    public byte[] getBackground_map() {
+        return background_map;
     }
 
     public void setFloorID(String floorID) {

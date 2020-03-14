@@ -10,9 +10,11 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("DashboardUI.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("DashboardUI.fxml"));
+        Parent root = loader.load();
         primaryStage.setTitle("Login");
         primaryStage.setScene(new Scene(root, 1200, 700));
+        ((Dashboard)loader.getController()).curr_stg=primaryStage;
         primaryStage.show();
     }
 
