@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.canvas.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<Pane prefHeight="700.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.nimblefix.Dashboard">
+   <children>
+      <MenuBar layoutY="2.0" prefHeight="25.0" prefWidth="1200.0">
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+              <MenuItem mnemonicParsing="false" text="New Floor" />
+                  <MenuItem mnemonicParsing="false" text="Attach/Modify Map" />
+                  <MenuItem mnemonicParsing="false" text="Remove Map" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" text="Save to Local Drive" />
+                  <MenuItem mnemonicParsing="false" text="Save As to Local Drive" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" text="Commit towards Server" />
+                  <MenuItem mnemonicParsing="false" text="Quit" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Help">
+            <items>
+              <MenuItem mnemonicParsing="false" text="About" />
+                  <MenuItem mnemonicParsing="false" text="About Us" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+      <ScrollPane fx:id="canvas_container" layoutX="198.0" layoutY="65.0" prefHeight="636.0" prefWidth="1002.0">
+         <content>
+            <Canvas fx:id="canvas" height="619.0" onMouseClicked="#place_inventory" width="1000.0" />
+         </content>
+      </ScrollPane>
+      <ListView fx:id="floor_list" layoutY="221.0" prefHeight="481.0" prefWidth="198.0" />
+      <Label layoutX="11.0" layoutY="197.0" text="Floors" />
+      <Button fx:id="place_inventory_button" layoutX="9.0" layoutY="35.0" mnemonicParsing="false" onMouseClicked="#add_inventory" prefHeight="25.0" prefWidth="179.0" text="Place Inventory" />
+      <Button layoutX="8.0" layoutY="66.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="179.0" text="Modify Inventory" />
+      <Button layoutX="8.0" layoutY="97.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="179.0" text="Delete Inventory" />
+      <Button fx:id="Floor_Add_button" layoutX="132.0" layoutY="192.0" mnemonicParsing="false" onMouseClicked="#add_Floor" prefHeight="17.0" prefWidth="25.0" text="+" />
+      <Button layoutX="164.0" layoutY="192.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="25.0" text="-" />
+      <TextField layoutX="9.0" layoutY="149.0" prefHeight="25.0" prefWidth="179.0" promptText="Organization Name" />
+      <Label fx:id="current_floor_string" layoutX="213.0" layoutY="34.0" prefHeight="17.0" prefWidth="348.0" text="No floor selected">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Label>
+   </children>
+</Pane>
