@@ -60,6 +60,6 @@
          </content>
       </TitledPane>
       <CheckBox fx:id="auto_exp_check" layoutX="712.0" layoutY="39.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="98.0" text="Auto Expand" />
-      <Button layoutX="10.0" layoutY="150.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="179.0" text="Manage Inventory Category" />
+      <Button layoutX="10.0" layoutY="150.0" mnemonicParsing="false" onMouseClicked="#manage_category" prefHeight="25.0" prefWidth="179.0" text="Manage Inventory Category" />
    </children>
 </Pane>

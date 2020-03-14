@@ -4,16 +4,19 @@ import com.sun.org.apache.xml.internal.security.algorithms.MessageDigestAlgorith
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 
 public class Organization {
 
     String oui;
     String organization_Name;
     ArrayList<OrganizationalFloors> floors;
+    HashMap<String,Category> categories;
 
     public Organization(String organization_Name){
         this.organization_Name = organization_Name;
         floors = new ArrayList<OrganizationalFloors>();
+        categories = new HashMap<String,Category>();
     }
 
     public ArrayList<OrganizationalFloors> getFloors(){

@@ -9,8 +9,11 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
@@ -27,6 +30,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -109,6 +113,16 @@ public class Dashboard implements Initializable {
         about_id.setText("Unique ID : "+i.getId());
         about_title.setText(i.getTitle());
         about_desc.setText(i.getDescription());
+    }
+
+    public void manage_category(MouseEvent mouseEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("CategoryManagerUI.fxml"));
+        Parent root = loader.load();
+        Stage newStage = new Stage();
+        newStage.setTitle("Category Manager");
+        newStage.setScene(new Scene(root, 700, 500));
+        ((CategoryManager)loader.getController()).curr_stg=newStage;
+        newStage.showAndWait();
     }
 
     @Override
@@ -198,3 +212,5 @@ public class Dashboard implements Initializable {
     }
 
 }
+
+
