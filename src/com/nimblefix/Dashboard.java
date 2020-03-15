@@ -1,5 +1,6 @@
 package com.nimblefix;
 
+import com.nimblefix.core.Category;
 import com.nimblefix.core.InventoryItem;
 import com.nimblefix.core.Organization;
 import com.nimblefix.core.OrganizationalFloors;
@@ -23,6 +24,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import javax.imageio.ImageIO;
@@ -32,6 +34,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.ResourceBundle;
 
 public class Dashboard implements Initializable {
@@ -40,6 +43,8 @@ public class Dashboard implements Initializable {
 
     OrganizationalFloors current_selected_floor=null;
     Image floor_background_image = null;
+    InventoryItem current_selected_inventory = null;
+    HashMap<String,String> categoryToColourMap;
 
     boolean adding_mode = false;
 
@@ -53,6 +58,7 @@ public class Dashboard implements Initializable {
     @FXML TextArea about_desc;
     @FXML ImageView about_qr;
     @FXML Button place_inventory_button, delete_inventory_button,about_save;
+    @FXML ChoiceBox about_category_dropdown;
 
     public void add_Map(ActionEvent actionEvent) throws Exception{
         if(current_selected_floor==null) {
@@ -74,7 +80,6 @@ public class Dashboard implements Initializable {
         set_current_floor(floor_list.getSelectionModel().getSelectedItem().toString());
     }
 
-
     public void add_inventory(MouseEvent mouseEvent) {
         if(current_selected_floor==null) {
             Alert a = new Alert(Alert.AlertType.ERROR ,null, ButtonType.OK);
@@ -94,40 +99,91 @@ public class Dashboard implements Initializable {
             place_inventory_button.setText("Place Inventory");
             adding_mode=false;
             canvas.setCursor(Cursor.DEFAULT);
-
         }
     }
 
     public void place_inventory(MouseEvent mouseEvent) {
         if(adding_mode){
-            InventoryItem i = new InventoryItem(null,org.getUniqueID(),"Untitled Item","No description",mouseEvent.getX(),mouseEvent.getY());
-            loadintoAboutInventory(i);
+            InventoryItem i = new InventoryItem(null,org.generateUniqueInventoryID(),"Untitled Item","No description",mouseEvent.getX(),mouseEvent.getY());
+            current_selected_floor.addInventoryItem(i);
+            selectcurrentInventory(i);
             if(auto_exp_check.isSelected())
                 about_inventory_pane.setExpanded(true);
-            current_selected_floor.addInventoryItem(i);
             redraw();
+        }
+        else{
+            InventoryItem i = current_selected_floor.getInventoryItem(new InventoryItem.Location(mouseEvent.getX(),mouseEvent.getY()));
+            if(i==null){selectcurrentInventory(null); return;}
+            selectcurrentInventory(i);
+            if(auto_exp_check.isSelected())
+                about_inventory_pane.setExpanded(true);
         }
     }
 
+    private void selectcurrentInventory(InventoryItem i){
+        current_selected_inventory = i;
+        loadintoAboutInventory(i);
+        redraw();
+    }
+
     private void loadintoAboutInventory(InventoryItem i){
+        if(i==null){about_inventory_pane.setExpanded(false); return;}
         about_id.setText("Unique ID : "+i.getId());
         about_title.setText(i.getTitle());
         about_desc.setText(i.getDescription());
+        if(i.getCategoryTag()==null)
+            about_category_dropdown.getSelectionModel().select(0);
+        else
+            about_category_dropdown.getSelectionModel().select(org.getCategoryStringfromCategoryID(i.getCategoryTag()));
+    }
+
+    private void load_categories(){
+        about_category_dropdown.getItems().clear();
+        about_category_dropdown.getItems().add("No Category");
+        for(Category c : org.getCategories())
+            about_category_dropdown.getItems().add(c.getCategoryString());
+
+        if(current_selected_inventory!=null) {
+            String t = org.getCategoryStringfromCategoryID(current_selected_inventory.getCategoryTag());
+            if(t==null)
+                about_category_dropdown.getSelectionModel().select(0);
+            else
+                about_category_dropdown.getSelectionModel().select(t);
+        }
+
     }
 
     public void manage_category(MouseEvent mouseEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("CategoryManagerUI.fxml"));
         Parent root = loader.load();
+
         Stage newStage = new Stage();
+
+        ((CategoryManager)loader.getController()).curr_stg=newStage;
+        ((CategoryManager)loader.getController()).setOrganization(org);
+
         newStage.setTitle("Category Manager");
         newStage.setScene(new Scene(root, 700, 500));
-        ((CategoryManager)loader.getController()).curr_stg=newStage;
+        newStage.setResizable(false);
+        newStage.initModality(Modality.APPLICATION_MODAL);
+
         newStage.showAndWait();
+        load_categories();
+        generateCategoryIDtoColourMap();
+        redraw();
+    }
+
+    private void generateCategoryIDtoColourMap(){
+        categoryToColourMap.clear();
+        for(Category c : org.getCategories())
+            categoryToColourMap.put(c.getUniqueID(),c.getRepresentationColor());
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         org = new Organization("Untitled Organization");
+
+        categoryToColourMap = new HashMap<String, String>();
 
         floor_list.setEditable(true);
         floor_list.setCellFactory(TextFieldListCell.forListView());
@@ -155,14 +211,43 @@ public class Dashboard implements Initializable {
         about_inventory_pane.expandedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                if(newValue)
-                    about_inventory_pane.setPrefHeight(214);
+                if(newValue) {
+                    if(current_selected_inventory==null){about_inventory_pane.setExpanded(false);return;}
+                    about_inventory_pane.setPrefHeight(253);
+                }
                 else if(!newValue)
                     about_inventory_pane.setPrefHeight(27);
             }
         });
 
+        about_title.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                current_selected_inventory.setTitle(newValue);
+            }
+        });
+
+        about_desc.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                current_selected_inventory.setDescription(newValue);
+            }
+        });
+
+        about_category_dropdown.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
+            @Override
+            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+                if(newValue==null||current_selected_inventory==null)return;
+                if(newValue.equals("No Category"))
+                    current_selected_inventory.setCategoryTag(null);
+                else {
+                    current_selected_inventory.setCategoryTag(org.getCategoryIDfromCategoryString(newValue.toString()));
+                }
+            }
+        });
+
         canvas.getGraphicsContext2D().fillText("Select a floor to view.",canvas.getWidth()/2,canvas.getHeight()/2);
+        load_categories();
     }
 
     private void set_current_floor(String floor){
@@ -206,9 +291,22 @@ public class Dashboard implements Initializable {
             painter.drawImage(floor_background_image, 0, 0);
         }
 
-        painter.setFill(Color.valueOf("#4f009e"));
-        for(InventoryItem i : current_selected_floor.getInventories())
-            painter.fillOval(i.getLocation().getX()-5,i.getLocation().getY()-5,10,10);
+        for(InventoryItem i : current_selected_floor.getInventories()) {
+            if(i.equals(current_selected_inventory)) {
+                painter.setFill(Color.valueOf("#000000"));
+                painter.fillOval(i.getLocation().getX() - 5, i.getLocation().getY() - 5, 10, 10);
+                painter.setLineWidth(1);
+                painter.strokeOval(i.getLocation().getX() - 7, i.getLocation().getY() - 7,14,14);
+                painter.strokeOval(i.getLocation().getX() - 9, i.getLocation().getY() - 9,18,18);
+                painter.strokeOval(i.getLocation().getX() - 11, i.getLocation().getY() - 11,22,22);
+            }
+            else {
+                String colorHex = categoryToColourMap.get(i.getCategoryTag());
+                if(colorHex==null)colorHex="#314cb6";
+                        painter.setFill(Color.valueOf(colorHex));
+                painter.fillOval(i.getLocation().getX() - 5, i.getLocation().getY() - 5, 10, 10);
+            }
+        }
     }
 
 }

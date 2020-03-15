@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<Pane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.nimblefix.CategoryManager"
-            prefHeight="700.0" prefWidth="500.0">
-
-
-
+<Pane prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.nimblefix.CategoryManager">
+   <children>
+      <Label layoutX="15.0" prefHeight="72.0" prefWidth="670.0" text="Category Manager organizes each Inventory item in an organization on basis of Category. Category also applies default title, description and representational colour, however it can be changed. Category Name and colour are consistent across all inventories belonging to it while title and description are not." wrapText="true" />
+      <TableView fx:id="table" editable="true" layoutX="15.0" layoutY="115.0" prefHeight="327.0" prefWidth="670.0">
+        <columns>
+          <TableColumn fx:id="category_str_column" prefWidth="200.0" text="Category String" />
+            <TableColumn fx:id="colour_column" prefWidth="50.0" resizable="false" sortable="false" text="Colour" />
+          <TableColumn fx:id="title_column" prefWidth="150.0" text="Default Title" />
+            <TableColumn fx:id="desc_column" prefWidth="275.0" text="Default Description" />
+        </columns>
+      </TableView>
+      <Button fx:id="add" layoutX="16.0" layoutY="83.0" mnemonicParsing="false" onMouseClicked="#add_clicked" text="+ Add" />
+      <Button fx:id="delete" layoutX="74.0" layoutY="83.0" mnemonicParsing="false" onMouseClicked="#delete_clicked" text="- Delete" />
+      <Button layoutX="496.0" layoutY="461.0" mnemonicParsing="false" onMouseClicked="#apply_clicked" prefHeight="25.0" prefWidth="90.0" text="Apply" />
+      <Button layoutX="594.0" layoutY="461.0" mnemonicParsing="false" onMouseClicked="#exit_clicked" prefHeight="25.0" prefWidth="90.0" text="Cancel" />
+   </children>
 </Pane>

@@ -49,17 +49,18 @@
       </Label>
       <TitledPane fx:id="about_inventory_pane" alignment="CENTER_RIGHT" animated="false" expanded="false" layoutX="821.0" layoutY="34.0" prefHeight="27.0" prefWidth="368.0" text="About Inventory">
          <content>
-            <Pane prefHeight="180.0" prefWidth="366.0">
+            <Pane prefHeight="0.0" prefWidth="366.0">
                <children>
                   <Label fx:id="about_id" layoutX="14.0" layoutY="14.0" prefHeight="17.0" prefWidth="226.0" text="Unique ID :  ABC123BCD123" />
-                  <ImageView fx:id="about_qr" fitHeight="120.0" fitWidth="112.0" layoutX="233.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" />
-                  <TextField fx:id="about_title" layoutX="14.0" layoutY="43.0" prefHeight="25.0" prefWidth="207.0" promptText="Title" />
-                  <TextArea fx:id="about_desc" layoutX="14.0" layoutY="78.0" prefHeight="97.0" prefWidth="207.0" promptText="Description" />
-                  <Button fx:id="about_save" layoutX="234.0" layoutY="149.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="111.0" text="Save Image" />
+                  <ImageView fx:id="about_qr" fitHeight="120.0" fitWidth="112.0" layoutX="241.0" layoutY="51.0" pickOnBounds="true" preserveRatio="true" />
+                  <TextField fx:id="about_title" layoutX="14.0" layoutY="83.0" prefHeight="25.0" prefWidth="213.0" promptText="Title" />
+                  <TextArea fx:id="about_desc" layoutX="14.0" layoutY="117.0" prefHeight="97.0" prefWidth="213.0" promptText="Description" />
+                  <Button fx:id="about_save" layoutX="243.0" layoutY="185.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="111.0" text="Save Image" />
+                  <ChoiceBox fx:id="about_category_dropdown" layoutX="14.0" layoutY="49.0" prefHeight="25.0" prefWidth="213.0" />
                </children></Pane>
          </content>
       </TitledPane>
-      <CheckBox fx:id="auto_exp_check" layoutX="712.0" layoutY="39.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="98.0" text="Auto Expand" />
+      <CheckBox fx:id="auto_exp_check" layoutX="715.0" layoutY="39.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="98.0" text="Auto Expand" />
       <Button layoutX="10.0" layoutY="150.0" mnemonicParsing="false" onMouseClicked="#manage_category" prefHeight="25.0" prefWidth="179.0" text="Manage Inventory Category" />
    </children>
 </Pane>

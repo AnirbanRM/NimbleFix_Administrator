@@ -4,19 +4,18 @@ import com.sun.org.apache.xml.internal.security.algorithms.MessageDigestAlgorith
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 
 public class Organization {
 
     String oui;
     String organization_Name;
     ArrayList<OrganizationalFloors> floors;
-    HashMap<String,Category> categories;
+    ArrayList<Category> categories;
 
     public Organization(String organization_Name){
         this.organization_Name = organization_Name;
         floors = new ArrayList<OrganizationalFloors>();
-        categories = new HashMap<String,Category>();
+        categories = new ArrayList<Category>();
     }
 
     public ArrayList<OrganizationalFloors> getFloors(){
@@ -30,10 +29,63 @@ public class Organization {
         return false;
     }
 
-    public String getUniqueID(){
+    public String getOui() {
+        return oui;
+    }
+
+    public String getOrganization_Name() {
+        return organization_Name;
+    }
+
+    public ArrayList<Category> getCategories() {
+        return categories;
+    }
+
+    public boolean categoryExist(String categoryString){
+        for (Category c : categories){
+            if(categoryString.equals(c.getCategoryString()))
+                return true;
+        }
+        return false;
+    }
+
+    public void setOui(String oui) {
+        this.oui = oui;
+    }
+
+    public void setOrganization_Name(String organization_Name) {
+        this.organization_Name = organization_Name;
+    }
+
+    public void setFloors(ArrayList<OrganizationalFloors> floors) {
+        this.floors = floors;
+    }
+
+    public void setCategories(ArrayList<Category> categories) {
+        this.categories = categories;
+    }
+
+    public String generateUniqueInventoryID(){
         Calendar i = Calendar.getInstance();
         return ""+i.get(Calendar.DATE)+i.get(Calendar.MONTH)+i.get(Calendar.YEAR)+i.get(Calendar.HOUR)+i.get(Calendar.MINUTE)+i.get(Calendar.SECOND)+i.get(Calendar.MILLISECOND);
     }
+
+    public String getCategoryIDfromCategoryString(String categoryString) {
+        for(Category c : categories){
+            if(c.getCategoryString().equals(categoryString))
+                return c.getUniqueID();
+        }
+        return null;
+    }
+
+    public String getCategoryStringfromCategoryID(String categoryID){
+        for(Category c : categories){
+            if(c.getUniqueID().equals(categoryID))
+                return c.getCategoryString();
+        }
+        return null;
+    }
+
 
     public void addFloor(OrganizationalFloors floor){
         floors.add(floor);
@@ -67,4 +119,5 @@ public class Organization {
     public int getFloorscount(){
         return floors.size();
     }
+
 }

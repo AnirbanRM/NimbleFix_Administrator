@@ -37,6 +37,14 @@ public class OrganizationalFloors {
         return inventories.get(index);
     }
 
+    public InventoryItem getInventoryItem(InventoryItem.Location l){
+        for(InventoryItem i : inventories){
+            if(Math.abs(i.location.X-l.X)<=5&&Math.abs(i.location.Y-l.Y)<=5)
+                return i;
+        }
+        return null;
+    }
+
     public void addInventoryItem(InventoryItem item){
         inventories.add(item);
     }

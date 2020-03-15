@@ -49,7 +49,7 @@ public class InventoryItem {
 
     public static class Location{
         double X,Y;
-        Location(double X, double Y){
+        public Location(double X, double Y){
             this.X=X;
             this.Y=Y;
         }
@@ -73,6 +73,7 @@ public class InventoryItem {
 
     String oui;
     String id;
+    String categoryTag;
     String title;
     String description;
     Location location;
@@ -85,6 +86,7 @@ public class InventoryItem {
         this.description=description;
         location = new Location(X,Y);
         this.History = new ArrayList<HistoryItem>();
+        this.categoryTag = null;
     }
 
     public String getOui() {
@@ -105,6 +107,14 @@ public class InventoryItem {
 
     public Location getLocation(){
         return this.location;
+    }
+
+    public String getCategoryTag() {
+        return categoryTag;
+    }
+
+    public void setCategoryTag(String categoryTag) {
+        this.categoryTag = categoryTag;
     }
 
     public void setOui(String oui) {
