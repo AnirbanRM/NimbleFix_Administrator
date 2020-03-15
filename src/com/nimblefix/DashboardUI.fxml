@@ -32,7 +32,7 @@
       </MenuBar>
       <ScrollPane fx:id="canvas_container" layoutX="198.0" layoutY="65.0" prefHeight="636.0" prefWidth="1002.0">
          <content>
-            <Canvas fx:id="canvas" height="619.0" onMouseClicked="#place_inventory" width="1000.0" />
+            <Canvas fx:id="canvas" height="619.0" onMouseClicked="#place_inventory" onMouseDragged="#node_movement" onMousePressed="#mouse_down" width="1000.0" />
          </content>
       </ScrollPane>
       <ListView fx:id="floor_list" layoutY="264.0" prefHeight="438.0" prefWidth="199.0" />
@@ -56,7 +56,8 @@
                   <TextField fx:id="about_title" layoutX="14.0" layoutY="83.0" prefHeight="25.0" prefWidth="213.0" promptText="Title" />
                   <TextArea fx:id="about_desc" layoutX="14.0" layoutY="117.0" prefHeight="97.0" prefWidth="213.0" promptText="Description" />
                   <Button fx:id="about_save" layoutX="243.0" layoutY="185.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="111.0" text="Save Image" />
-                  <ChoiceBox fx:id="about_category_dropdown" layoutX="14.0" layoutY="49.0" prefHeight="25.0" prefWidth="213.0" />
+                  <ChoiceBox fx:id="about_category_dropdown" layoutX="14.0" layoutY="49.0" prefHeight="25.0" prefWidth="179.0" />
+                  <Button fx:id="category_mutate_button" layoutX="194.0" layoutY="49.0" mnemonicParsing="false" onMouseClicked="#mutate_clicked" prefHeight="25.0" prefWidth="32.0" />
                </children></Pane>
          </content>
       </TitledPane>

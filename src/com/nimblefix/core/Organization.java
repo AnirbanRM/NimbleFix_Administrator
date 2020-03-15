@@ -70,18 +70,18 @@ public class Organization {
         return ""+i.get(Calendar.DATE)+i.get(Calendar.MONTH)+i.get(Calendar.YEAR)+i.get(Calendar.HOUR)+i.get(Calendar.MINUTE)+i.get(Calendar.SECOND)+i.get(Calendar.MILLISECOND);
     }
 
-    public String getCategoryIDfromCategoryString(String categoryString) {
+    public Category getCategoryfromCategoryString(String categoryString) {
         for(Category c : categories){
             if(c.getCategoryString().equals(categoryString))
-                return c.getUniqueID();
+                return c;
         }
         return null;
     }
 
-    public String getCategoryStringfromCategoryID(String categoryID){
+    public Category getCategoryfromCategoryID(String categoryID){
         for(Category c : categories){
             if(c.getUniqueID().equals(categoryID))
-                return c.getCategoryString();
+                return c;
         }
         return null;
     }
