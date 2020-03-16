@@ -35,10 +35,15 @@
          </children>
       </Pane>
       <ImageView fx:id="logo_box" fitHeight="54.0" fitWidth="195.0" layoutX="14.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" />
-      <Label fx:id="connected_label" layoutX="592.0" layoutY="41.0" text="Connected to">
+      <ImageView fx:id="logo3" fitHeight="20.0" fitWidth="20.0" layoutX="573.0" layoutY="35.0" pickOnBounds="true" preserveRatio="true" />
+      <Label fx:id="connected_label" layoutX="602.0" layoutY="32.0" prefHeight="27.0" prefWidth="161.0" text="Connected to">
          <font>
             <Font size="18.0" />
          </font></Label>
-      <ImageView fx:id="logo3" fitHeight="150.0" fitWidth="161.0" layoutX="400.0" layoutY="48.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="logo4" fitHeight="20.0" fitWidth="20.0" layoutX="573.0" layoutY="68.0" pickOnBounds="true" preserveRatio="true" />
+      <Label fx:id="user_label" layoutX="602.0" layoutY="65.0" prefHeight="27.0" prefWidth="161.0" text="User">
+         <font>
+            <Font size="18.0" />
+         </font></Label>
    </children>
 </Pane>
