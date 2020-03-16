@@ -10,21 +10,20 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("DashboardUI.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("LoginUI.fxml"));
         Parent root = loader.load();
-        primaryStage.setTitle("Dashboard");
-        primaryStage.setScene(new Scene(root, 800, 500));
-        ((Dashboard)loader.getController()).curr_stg=primaryStage;
+        primaryStage.setTitle("Login");
+        primaryStage.setResizable(false);
+        primaryStage.setScene(new Scene(root, 800, 400));
         primaryStage.show();
 
-
-
-
-
-
-
-
-
+        /*FXMLLoader loader = new FXMLLoader(getClass().getResource("DashboardUI.fxml"));
+        Parent root = loader.load();
+        primaryStage.setTitle("Dashboard");
+        primaryStage.setResizable(false);
+        primaryStage.setScene(new Scene(root, 800, 500));
+        ((Dashboard)loader.getController()).curr_stg=primaryStage;
+        primaryStage.show();*/
 
 
 
