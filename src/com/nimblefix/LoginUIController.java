@@ -18,7 +18,7 @@ public class LoginUIController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        Image img = new Image("file://"+ getClass().getResource("/resources/nimblefix_logo.png").getPath(), 500, 150, false, true);
+        Image img = new Image("file://"+ getClass().getResource("/resources/nimblefix_logo.png").getPath(), 500, 150, true, true);
         logo.setImage(img);
     }
 

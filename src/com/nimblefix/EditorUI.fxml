@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.canvas.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<Pane prefHeight="700.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.nimblefix.Editor">
+   <children>
+      <MenuBar layoutY="2.0" prefHeight="25.0" prefWidth="1200.0">
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+                <MenuItem mnemonicParsing="false" onAction="#new_organization" text="New Organization" />
+                <MenuItem mnemonicParsing="false" onAction="#loadlocaldrive" text="Load from Local Drive" />
+                <MenuItem mnemonicParsing="false" text="Load from Server" />
+                <MenuItem mnemonicParsing="false" onAction="#SaveFile" text="Save to Local Drive" />
+                <MenuItem mnemonicParsing="false" onAction="#SaveAsFile" text="Save As to Local Drive" />
+                <MenuItem mnemonicParsing="false" text="Commit towards Server" />
+                <SeparatorMenuItem mnemonicParsing="false" />
+                <MenuItem mnemonicParsing="false" onAction="#add_Map" text="Attach/Modify Map" />
+                <MenuItem mnemonicParsing="false" onAction="#remove_map" text="Remove Map" />
+                <SeparatorMenuItem mnemonicParsing="false" />
+                <MenuItem mnemonicParsing="false" onAction="#quit" text="Quit" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Help">
+            <items>
+              <MenuItem mnemonicParsing="false" text="About" />
+                  <MenuItem mnemonicParsing="false" text="About Us" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+      <ScrollPane fx:id="canvas_container" layoutX="198.0" layoutY="65.0" prefHeight="636.0" prefWidth="1002.0">
+         <content>
+            <Canvas fx:id="canvas" height="620.0" onMouseClicked="#place_inventory" onMouseDragged="#node_movement" onMousePressed="#mouse_down" width="1000.0" />
+         </content>
+      </ScrollPane>
+      <ListView fx:id="floor_list" layoutY="264.0" prefHeight="438.0" prefWidth="199.0" />
+      <Label layoutX="11.0" layoutY="239.0" text="Floors" />
+      <Button fx:id="place_inventory_button" layoutX="9.0" layoutY="77.0" mnemonicParsing="false" onMouseClicked="#add_inventory" prefHeight="25.0" prefWidth="179.0" text="Place Inventory" />
+      <Button fx:id="delete_inventory_button" disable="true" layoutX="10.0" layoutY="108.0" mnemonicParsing="false" onMouseClicked="#delete_inventory" prefHeight="25.0" prefWidth="179.0" text="Delete Inventory" />
+      <Button fx:id="Floor_Add_button" layoutX="132.0" layoutY="234.0" mnemonicParsing="false" onMouseClicked="#add_Floor" prefHeight="17.0" prefWidth="25.0" text="+" />
+      <Button fx:id="Floor_Delete_button" layoutX="164.0" layoutY="234.0" mnemonicParsing="false" onMouseClicked="#delete_Floor" prefHeight="17.0" prefWidth="25.0" text="-" />
+      <TextField fx:id="org_name_box" layoutX="10.0" layoutY="33.0" prefHeight="25.0" prefWidth="295.0" promptText="Organization Name" />
+      <Label fx:id="current_floor_string" layoutX="321.0" layoutY="32.0" prefHeight="27.0" prefWidth="368.0" text="No floor selected">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Label>
+      <TitledPane fx:id="about_inventory_pane" alignment="CENTER_RIGHT" animated="false" expanded="false" layoutX="821.0" layoutY="34.0" prefHeight="27.0" prefWidth="368.0" text="About Inventory">
+         <content>
+            <Pane prefHeight="0.0" prefWidth="366.0">
+               <children>
+                  <Label fx:id="about_id" layoutX="14.0" layoutY="14.0" prefHeight="17.0" prefWidth="226.0" text="Unique ID :  ABC123BCD123" />
+                  <ImageView fx:id="about_qr" fitHeight="120.0" fitWidth="112.0" layoutX="241.0" layoutY="51.0" pickOnBounds="true" preserveRatio="true" />
+                  <TextField fx:id="about_title" layoutX="14.0" layoutY="83.0" prefHeight="25.0" prefWidth="213.0" promptText="Title" />
+                  <TextArea fx:id="about_desc" layoutX="14.0" layoutY="117.0" prefHeight="97.0" prefWidth="213.0" promptText="Description" />
+                  <Button fx:id="about_save" layoutX="243.0" layoutY="185.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="111.0" text="Save Image" />
+                  <ChoiceBox fx:id="about_category_dropdown" layoutX="14.0" layoutY="49.0" prefHeight="25.0" prefWidth="179.0" />
+                  <Button fx:id="category_mutate_button" layoutX="194.0" layoutY="49.0" mnemonicParsing="false" onMouseClicked="#mutate_clicked" prefHeight="25.0" prefWidth="32.0" />
+               </children></Pane>
+         </content>
+      </TitledPane>
+      <CheckBox fx:id="auto_exp_check" layoutX="715.0" layoutY="39.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="98.0" text="Auto Expand" />
+      <Button layoutX="10.0" layoutY="150.0" mnemonicParsing="false" onMouseClicked="#manage_category" prefHeight="25.0" prefWidth="179.0" text="Manage Inventory Category" />
+   </children>
+</Pane>
