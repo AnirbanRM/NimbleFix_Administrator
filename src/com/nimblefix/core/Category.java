@@ -1,8 +1,9 @@
 package com.nimblefix.core;
 
+import java.io.Serializable;
 import java.util.Calendar;
 
-public class Category {
+public class Category implements Serializable {
     String categoryString;
     String defaultTitle;
     String defaultDescription;

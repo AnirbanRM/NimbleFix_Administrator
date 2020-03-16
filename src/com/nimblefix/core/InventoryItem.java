@@ -17,12 +17,13 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class InventoryItem {
+public class InventoryItem implements Serializable {
 
-    public class HistoryItem{
+    public class HistoryItem implements Serializable{
         Date datetimestamp;
         String remarks;
         String result;
@@ -47,7 +48,7 @@ public class InventoryItem {
     }
 
 
-    public static class Location{
+    public static class Location implements Serializable{
         double X,Y;
         public Location(double X, double Y){
             this.X=X;
@@ -71,7 +72,7 @@ public class InventoryItem {
         }
     }
 
-    String oui;
+    Organization parentOrganization;
     String id;
     String categoryTag;
     String title;
@@ -79,8 +80,8 @@ public class InventoryItem {
     Location location;
     ArrayList<HistoryItem> History;
 
-    public InventoryItem(String OUI, String ID, String title, String description, double X, double Y){
-        this.oui=OUI;
+    public InventoryItem(Organization organization, String ID, String title, String description, double X, double Y){
+        this.parentOrganization = organization;
         this.id=ID;
         this.title = title;
         this.description=description;
@@ -90,7 +91,15 @@ public class InventoryItem {
     }
 
     public String getOui() {
-        return oui;
+        return parentOrganization.oui;
+    }
+
+    public void setParentOrganization(Organization newOrganization){
+        this.parentOrganization=newOrganization;
+    }
+
+    public Organization getParentOrganization(){
+        return this.parentOrganization;
     }
 
     public String getId() {
@@ -115,10 +124,6 @@ public class InventoryItem {
 
     public void setCategoryTag(String categoryTag) {
         this.categoryTag = categoryTag;
-    }
-
-    public void setOui(String oui) {
-        this.oui = oui;
     }
 
     public void setId(String id) {
@@ -160,7 +165,7 @@ public class InventoryItem {
         QRCodeWriter qrg = new QRCodeWriter();
         BitMatrix byteMatrix = null;
         try {
-            byteMatrix = qrg.encode(oui + "/" + id, BarcodeFormat.QR_CODE, 250, 250);
+            byteMatrix = qrg.encode(parentOrganization.oui + "/" + id, BarcodeFormat.QR_CODE, 250, 250);
         } catch (WriterException e) {
             e.printStackTrace();
         }
@@ -168,7 +173,7 @@ public class InventoryItem {
         painter.drawImage(t, 0, 0);
 
         painter.setFont(Font.font("monospaced", FontWeight.BOLD, 10));
-        painter.fillText(oui + " / " + id, 30, 20);
+        painter.fillText(parentOrganization.oui + " / " + id, 30, 20);
         painter.fillText("NimbleFix QR Codes", 30, 235);
 
         painter.setStroke(Color.valueOf("#000000"));

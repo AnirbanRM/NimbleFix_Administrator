@@ -1,8 +1,10 @@
 package com.nimblefix.core;
 
+import java.awt.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class OrganizationalFloors {
+public class OrganizationalFloors implements Serializable {
 
     String floorID;
     byte[] background_map=null;

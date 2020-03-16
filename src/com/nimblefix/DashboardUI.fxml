@@ -12,14 +12,17 @@
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
-                  <MenuItem mnemonicParsing="false" onAction="#add_Map" text="Attach/Modify Map" />
-                  <MenuItem mnemonicParsing="false" text="Remove Map" />
-                  <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem mnemonicParsing="false" text="Save to Local Drive" />
-                  <MenuItem mnemonicParsing="false" text="Save As to Local Drive" />
-                  <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem mnemonicParsing="false" text="Commit towards Server" />
-                  <MenuItem mnemonicParsing="false" text="Quit" />
+                <MenuItem mnemonicParsing="false" text="New Organization" />
+                <MenuItem mnemonicParsing="false" onAction="#loadlocaldrive" text="Load from Local Drive" />
+                <MenuItem mnemonicParsing="false" text="Load from Server" />
+                <MenuItem mnemonicParsing="false" onAction="#SaveFile" text="Save to Local Drive" />
+                <MenuItem mnemonicParsing="false" onAction="#SaveAsFile" text="Save As to Local Drive" />
+                <MenuItem mnemonicParsing="false" text="Commit towards Server" />
+                <SeparatorMenuItem mnemonicParsing="false" />
+                <MenuItem mnemonicParsing="false" onAction="#add_Map" text="Attach/Modify Map" />
+                <MenuItem mnemonicParsing="false" onAction="#remove_map" text="Remove Map" />
+                <SeparatorMenuItem mnemonicParsing="false" />
+                <MenuItem mnemonicParsing="false" text="Quit" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Help">
@@ -41,7 +44,7 @@
       <Button fx:id="delete_inventory_button" layoutX="10.0" layoutY="108.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="179.0" text="Delete Inventory" />
       <Button fx:id="Floor_Add_button" layoutX="132.0" layoutY="234.0" mnemonicParsing="false" onMouseClicked="#add_Floor" prefHeight="17.0" prefWidth="25.0" text="+" />
       <Button layoutX="164.0" layoutY="234.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="25.0" text="-" />
-      <TextField layoutX="10.0" layoutY="33.0" prefHeight="25.0" prefWidth="295.0" promptText="Organization Name" />
+      <TextField fx:id="org_name_box" layoutX="10.0" layoutY="33.0" prefHeight="25.0" prefWidth="295.0" promptText="Organization Name" />
       <Label fx:id="current_floor_string" layoutX="321.0" layoutY="32.0" prefHeight="27.0" prefWidth="368.0" text="No floor selected">
          <font>
             <Font name="System Bold" size="18.0" />

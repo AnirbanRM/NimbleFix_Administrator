@@ -2,10 +2,11 @@ package com.nimblefix.core;
 
 import com.sun.org.apache.xml.internal.security.algorithms.MessageDigestAlgorithm;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class Organization {
+public class Organization implements Serializable {
 
     String oui;
     String organization_Name;
@@ -85,7 +86,6 @@ public class Organization {
         }
         return null;
     }
-
 
     public void addFloor(OrganizationalFloors floor){
         floors.add(floor);

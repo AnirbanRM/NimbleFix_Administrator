@@ -6,7 +6,6 @@ import com.nimblefix.core.Organization;
 import com.nimblefix.core.OrganizationalFloors;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ListChangeListener;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -30,10 +29,7 @@ import javafx.stage.Stage;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.ResourceBundle;
@@ -46,6 +42,7 @@ public class Dashboard implements Initializable {
     Image floor_background_image = null;
     InventoryItem current_selected_inventory = null;
     HashMap<String,String> categoryToColourMap;
+    File currentfile = null;
 
     boolean adding_mode = false;
 
@@ -55,7 +52,7 @@ public class Dashboard implements Initializable {
     @FXML ScrollPane canvas_container;
     @FXML Label current_floor_string,about_id;
     @FXML TitledPane about_inventory_pane;
-    @FXML TextField about_title;
+    @FXML TextField about_title,org_name_box;
     @FXML TextArea about_desc;
     @FXML ImageView about_qr;
     @FXML Button place_inventory_button, delete_inventory_button,about_save,category_mutate_button;
@@ -79,6 +76,59 @@ public class Dashboard implements Initializable {
         ImageIO.write(i,"png",bos);
         current_selected_floor.setBackground_map(bos.toByteArray());
         set_current_floor(floor_list.getSelectionModel().getSelectedItem().toString());
+    }
+
+    public void remove_map(ActionEvent actionEvent) {
+        if(current_selected_floor==null) {
+            Alert a = new Alert(Alert.AlertType.ERROR ,null, ButtonType.OK);
+            a.setHeaderText("Please select a floor.");
+            a.setTitle("Error");
+            a.showAndWait();
+            return;
+        }
+
+        current_selected_floor.setBackground_map(null);
+        set_current_floor(floor_list.getSelectionModel().getSelectedItem().toString());
+    }
+
+    public void loadlocaldrive(ActionEvent actionEvent) throws Exception {
+        FileChooser fileChooser = new FileChooser();
+        FileChooser.ExtensionFilter efil = new FileChooser.ExtensionFilter("NimbleFix Maps","*.nfxm");
+        fileChooser.getExtensionFilters().add(efil);
+        File f = fileChooser.showOpenDialog(curr_stg);
+        FileInputStream fi = new FileInputStream(f);
+        ObjectInputStream oi = new ObjectInputStream(fi);
+        org = (Organization) oi.readObject();
+        currentfile=f;
+
+        refresh_floor_list();
+        load_categories();
+        generateCategoryIDtoColourMap();
+        org_name_box.setText(org.getOrganization_Name());
+    }
+
+    public void SaveFile(ActionEvent actionEvent) throws IOException {
+        if(!currentfile.exists()||currentfile==null){SaveAsFile(null);return;}
+        currentfile.delete();
+        FileOutputStream fo = new FileOutputStream(currentfile);
+        ObjectOutputStream objstr = new ObjectOutputStream(fo);
+        objstr.writeObject(org);
+        fo.close();
+    }
+
+    public void SaveAsFile(ActionEvent actionEvent) throws IOException {
+        FileChooser fileChooser = new FileChooser();
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("NimbleFix Maps (*.nfxm)", "*.nfxm");
+        fileChooser.getExtensionFilters().add(extFilter);
+        File file = fileChooser.showSaveDialog(curr_stg);
+        if(file.exists())file.delete();
+        if(file != null){
+            FileOutputStream fo = new FileOutputStream(file);
+            ObjectOutputStream objstr = new ObjectOutputStream(fo);
+            objstr.writeObject(org);
+            fo.close();
+            currentfile=file;
+        }
     }
 
     public void add_inventory(MouseEvent mouseEvent) {
@@ -105,7 +155,7 @@ public class Dashboard implements Initializable {
 
     public void place_inventory(MouseEvent mouseEvent) {
         if(adding_mode){
-            InventoryItem i = new InventoryItem(null,org.generateUniqueInventoryID(),"Untitled Item","No description",mouseEvent.getX(),mouseEvent.getY());
+            InventoryItem i = new InventoryItem(org,org.generateUniqueInventoryID(),"Untitled Item","No description",mouseEvent.getX(),mouseEvent.getY());
             current_selected_floor.addInventoryItem(i);
             selectcurrentInventory(i);
             if(auto_exp_check.isSelected())
@@ -144,8 +194,13 @@ public class Dashboard implements Initializable {
         about_desc.setText(i.getDescription());
         if(i.getCategoryTag()==null)
             about_category_dropdown.getSelectionModel().select(0);
-        else
-            about_category_dropdown.getSelectionModel().select(org.getCategoryfromCategoryID(i.getCategoryTag()).getCategoryString());
+        else {
+            Category cat= org.getCategoryfromCategoryID(i.getCategoryTag());
+            if(cat==null)
+                about_category_dropdown.getSelectionModel().select(0);
+            else
+                about_category_dropdown.getSelectionModel().select(cat.getCategoryString());
+        }
     }
 
     private void load_categories(){
@@ -159,9 +214,8 @@ public class Dashboard implements Initializable {
             if(t==null)
                 about_category_dropdown.getSelectionModel().select(0);
             else
-                about_category_dropdown.getSelectionModel().select(t);
+                about_category_dropdown.getSelectionModel().select(t.getCategoryString());
         }
-
     }
 
     public void manage_category(MouseEvent mouseEvent) throws IOException {
@@ -200,6 +254,13 @@ public class Dashboard implements Initializable {
 
         floor_list.setEditable(true);
         floor_list.setCellFactory(TextFieldListCell.forListView());
+
+        org_name_box.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                org.setOrganization_Name(newValue);
+            }
+        });
 
         floor_list.setOnEditCommit(new EventHandler<ListView.EditEvent>() {
             @Override
@@ -254,12 +315,7 @@ public class Dashboard implements Initializable {
                 if(newValue.equals("No Category"))
                     current_selected_inventory.setCategoryTag(null);
                 else {
-                    Category category = org.getCategoryfromCategoryString(newValue.toString());
-                    if(category==null){
-                        current_selected_inventory.setCategoryTag(null);
-                        return;
-                    }
-                    current_selected_inventory.setCategoryTag(category.getUniqueID());
+                    current_selected_inventory.setCategoryTag(org.getCategoryfromCategoryString(newValue.toString()).getUniqueID());
                 }
             }
         });
@@ -334,7 +390,6 @@ public class Dashboard implements Initializable {
             }
         }
     }
-
 }
 
 
