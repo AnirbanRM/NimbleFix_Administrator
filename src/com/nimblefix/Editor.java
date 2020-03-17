@@ -155,7 +155,7 @@ public class Editor implements Initializable {
         primaryStage.initOwner(curr_stg);
 
         ((Committer)loader.getController()).curr_stg = primaryStage;
-        ((Committer)loader.getController()).getandProceed(org);
+        ((Committer)loader.getController()).getandProceed(org,client);
 
         primaryStage.show();
     }

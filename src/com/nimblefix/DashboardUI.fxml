@@ -7,7 +7,7 @@
 
 <Pane prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.nimblefix.Dashboard">
    <children>
-      <Pane fx:id="fabricate_button" layoutX="470.0" layoutY="155.0" prefHeight="65.0" prefWidth="269.0" style="-fx-background-color: #320670;">
+      <Pane fx:id="fabricate_button" layoutX="470.0" layoutY="155.0" onMouseClicked="#fabricate_clicked" prefHeight="65.0" prefWidth="269.0" style="-fx-background-color: #320670;">
          <children>
             <Label layoutX="102.0" layoutY="14.0" prefHeight="37.0" prefWidth="161.0" text="Fabricate" textFill="WHITE">
                <font>
@@ -20,7 +20,7 @@
             </Label>
          </children>
       </Pane>
-      <Pane fx:id="spectate_button" layoutX="470.0" layoutY="243.0" prefHeight="65.0" prefWidth="269.0" style="-fx-background-color: #320670;">
+      <Pane fx:id="spectate_button" layoutX="470.0" layoutY="243.0" onMouseClicked="#spectate_clicked" prefHeight="65.0" prefWidth="269.0" style="-fx-background-color: #320670;">
          <children>
             <Label layoutX="102.0" layoutY="14.0" prefHeight="37.0" prefWidth="155.0" text="Spectate" textFill="WHITE">
                <font>

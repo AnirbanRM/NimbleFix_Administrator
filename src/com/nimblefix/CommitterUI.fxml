@@ -24,7 +24,7 @@
       <Label layoutX="55.0" layoutY="136.0" text="Floors :" />
       <Label layoutX="55.0" layoutY="158.0" text="Categories :" />
       <Label layoutX="55.0" layoutY="180.0" text="Inventory Items :" />
-      <Pane fx:id="commit_button" layoutX="388.0" layoutY="148.0" prefHeight="37.0" prefWidth="156.0" style="-fx-background-color: #3282b8;">
+      <Pane fx:id="commit_button" layoutX="388.0" layoutY="148.0" onMouseClicked="#commit_clicked" prefHeight="37.0" prefWidth="156.0" style="-fx-background-color: #3282b8;">
          <children>
             <Label fx:id="label1" layoutX="22.0" layoutY="5.0" text="Commit" textFill="WHITE">
                <font>

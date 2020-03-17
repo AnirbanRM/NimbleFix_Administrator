@@ -143,7 +143,7 @@ public class Dashboard implements Initializable {
         Thread organizationFetcher = new Thread(new Runnable() {
             @Override
             public void run() {
-                OrganizationsExchangerMessage organizationsExchangerMessage = new OrganizationsExchangerMessage(user_label.getText());
+                OrganizationsExchangerMessage organizationsExchangerMessage = new OrganizationsExchangerMessage(user_label.getText(),OrganizationsExchangerMessage.messageType.CLIENT_QUERY);
                 try {
                     client.WRITER.writeObject(organizationsExchangerMessage);
                     Object obj = client.readNext();
@@ -212,10 +212,15 @@ public class Dashboard implements Initializable {
             }
         });
 
+    }
 
+    public void fabricate_clicked(MouseEvent mouseEvent) {
+        if(list.getSelectionModel().getSelectedIndex()>=0){
 
+        }
+    }
 
-
+    public void spectate_clicked(MouseEvent mouseEvent) {
     }
 
 
