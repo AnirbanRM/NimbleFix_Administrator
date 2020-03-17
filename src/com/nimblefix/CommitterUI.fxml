@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<Pane prefHeight="240.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.nimblefix.Committer">
+   <children>
+      <Label fx:id="name_box" layoutX="27.0" layoutY="24.0" prefHeight="43.0" prefWidth="546.0" text="Organization Name">
+         <font>
+            <Font name="System Bold" size="28.0" />
+         </font>
+      </Label>
+      <Label layoutX="77.0" layoutY="81.0" text="Organization ID :">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Label>
+      <Label fx:id="oui_box" layoutX="199.0" layoutY="81.0" prefHeight="17.0" prefWidth="261.0" text="OUI">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font>
+      </Label>
+      <Label layoutX="55.0" layoutY="136.0" text="Floors :" />
+      <Label layoutX="55.0" layoutY="158.0" text="Categories :" />
+      <Label layoutX="55.0" layoutY="180.0" text="Inventory Items :" />
+      <Pane fx:id="commit_button" layoutX="388.0" layoutY="148.0" prefHeight="37.0" prefWidth="156.0" style="-fx-background-color: #3282b8;">
+         <children>
+            <Label fx:id="label1" layoutX="22.0" layoutY="5.0" text="Commit" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+         </children></Pane>
+      <Label fx:id="floor_c" layoutX="161.0" layoutY="136.0" text="FLOOR_C" />
+      <Label fx:id="cat_c" layoutX="161.0" layoutY="158.0" text="CATEGORY_C" />
+      <Label fx:id="inv_c" layoutX="161.0" layoutY="180.0" text="INVENTORY_C" />
+   </children>
+</Pane>

@@ -36,6 +36,7 @@ import java.util.ResourceBundle;
 
 public class Editor implements Initializable {
     public Stage curr_stg;
+    public Client client;
     Organization org;
 
     OrganizationalFloors current_selected_floor=null;
@@ -142,6 +143,21 @@ public class Editor implements Initializable {
             fo.close();
             currentfile=file;
         }
+    }
+
+    public void commit_server(ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("CommitterUI.fxml"));
+        Parent root = loader.load();
+        Stage primaryStage=new Stage();
+        primaryStage.setTitle("Commit");
+        primaryStage.setResizable(false);
+        primaryStage.setScene(new Scene(root, 600, 240));
+        primaryStage.initOwner(curr_stg);
+
+        ((Committer)loader.getController()).curr_stg = primaryStage;
+        ((Committer)loader.getController()).getandProceed(org);
+
+        primaryStage.show();
     }
 
     public void quit(ActionEvent actionEvent) {
@@ -438,4 +454,5 @@ public class Editor implements Initializable {
             painter.fillText("Select a floor to view.",canvas.getWidth()/2-40,canvas.getHeight()/2);
         }
     }
+
 }

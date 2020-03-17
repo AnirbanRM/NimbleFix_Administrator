@@ -15,26 +15,12 @@ public class Main extends Application {
         primaryStage.setTitle("Login");
         primaryStage.setResizable(false);
         primaryStage.setScene(new Scene(root, 800, 400));
+
+        ((LoginUIController)loader.getController()).curr_stg = primaryStage;
         primaryStage.show();
 
-        /*FXMLLoader loader = new FXMLLoader(getClass().getResource("DashboardUI.fxml"));
-        Parent root = loader.load();
-        primaryStage.setTitle("Dashboard");
-        primaryStage.setResizable(false);
-        primaryStage.setScene(new Scene(root, 800, 500));
-        ((Dashboard)loader.getController()).curr_stg=primaryStage;
-        primaryStage.show();*/
 
 
-
-
-
-        /*FXMLLoader loader = new FXMLLoader(getClass().getResource("EditorUI.fxml"));
-        Parent root = loader.load();
-        primaryStage.setTitle("Organization Fabricator");
-        primaryStage.setScene(new Scene(root, 1200, 700));
-        ((Editor)loader.getController()).curr_stg=primaryStage;
-        primaryStage.show();*/
     }
 
     public static void main(String[] args) {

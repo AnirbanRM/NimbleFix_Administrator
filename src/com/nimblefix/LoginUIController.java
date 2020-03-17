@@ -7,6 +7,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -15,6 +16,8 @@ public class LoginUIController implements Initializable {
     @FXML ImageView logo;
     @FXML TextField IP,Admin;
     @FXML PasswordField Password;
+
+    Stage curr_stg;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -26,7 +29,7 @@ public class LoginUIController implements Initializable {
         Thread client_thd = new Thread(new Runnable() {
             @Override
             public void run() {
-                Client client = new Client(IP.getText(),Admin.getText(),Password.getText());
+                Client client = new Client(IP.getText(),Admin.getText(),Password.getText(),curr_stg);
             }
         });
         client_thd.start();

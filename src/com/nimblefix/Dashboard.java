@@ -1,12 +1,16 @@
 package com.nimblefix;
 
+import com.nimblefix.ControlMessages.OrganizationsExchangerMessage;
 import com.nimblefix.core.Organization;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
@@ -24,6 +28,7 @@ import javafx.util.Callback;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -34,6 +39,7 @@ public class Dashboard implements Initializable {
     @FXML ListView list;
 
     public Stage curr_stg;
+    Client client;
 
     private class ListItem{
         String organizationName;
@@ -70,17 +76,20 @@ public class Dashboard implements Initializable {
         }
     }
 
+    public void setAddressandUserandClient(String address,String user,Client client){
+        this.client = client;
+        user_label.setText(user);
+        connected_label.setText(address);
+        fetchOrganizations();
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         icon1.setText("\uD83D\uDD8A");
         icon2.setText("\uD83D\uDC41");
-        connected_label.setText("255.255.255.255");
-        user_label.setText("Anirban");
         logo_box.setImage(new Image("file://" + getClass().getResource("/resources/nimblefix_logo.png").getPath(), 200, 150, true, true));
         logo3.setImage(new Image("file://" + getClass().getResource("/resources/server.png").getPath(), 20, 20, true, true));
         logo4.setImage(new Image("file://" + getClass().getResource("/resources/user.png").getPath(), 20, 20, true, true));
-
 
         fabricate_button.setOnMouseEntered(event -> fabricate_button.setBackground(new Background(new BackgroundFill(Color.valueOf("#4D089A"), CornerRadii.EMPTY, Insets.EMPTY))));
 
@@ -113,15 +122,46 @@ public class Dashboard implements Initializable {
         });
 
         prepareListView();
-        list.getItems().add(new ListItem("Bennett University","1515318183236821"));
-        list.getItems().add(new ListItem("Bennett University","1515318183236821"));
-        list.getItems().add(new ListItem("Bennett University","1515318183236821"));
-        list.getItems().add(new ListItem("Bennett University","1515318183236821"));
+    }
 
+    public void create_file(MouseEvent mouseEvent) throws Exception{
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("EditorUI.fxml"));
+        Parent root = loader.load();
+        Stage primaryStage= new Stage();
+        primaryStage.setTitle("Organization Fabricator");
+        primaryStage.setScene(new Scene(root, 1200, 700));
+        ((Editor)loader.getController()).curr_stg=primaryStage;
+        ((Editor)loader.getController()).client=client;
+
+        client.getCurrentShowingStage().hide();
+        client.setCurrentShowingStage(primaryStage);
+
+        primaryStage.show();
+    }
+
+    public void fetchOrganizations() {
+        Thread organizationFetcher = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                OrganizationsExchangerMessage organizationsExchangerMessage = new OrganizationsExchangerMessage(user_label.getText());
+                try {
+                    client.WRITER.writeObject(organizationsExchangerMessage);
+                    Object obj = client.readNext();
+                    addtoList((OrganizationsExchangerMessage)obj);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        organizationFetcher.start();
+    }
+
+    private void addtoList(OrganizationsExchangerMessage organizationsExchangerMessage){
+        for(Organization o : organizationsExchangerMessage.getOrganizations())
+            list.getItems().add(new ListItem(o.getOrganization_Name(),o.getOui()));
     }
 
     private void prepareListView() {
-
 
         list.setCellFactory(param -> new ListCell<ListItem>() {
             @Override
