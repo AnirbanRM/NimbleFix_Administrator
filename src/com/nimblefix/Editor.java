@@ -112,9 +112,17 @@ public class Editor implements Initializable {
         File f = fileChooser.showOpenDialog(curr_stg);
         FileInputStream fi = new FileInputStream(f);
         ObjectInputStream oi = new ObjectInputStream(fi);
-        org = (Organization) oi.readObject();
-        currentfile=f;
+        this.org = (Organization) oi.readObject();
+        this.currentfile=f;
 
+        refresh_floor_list();
+        load_categories();
+        generateCategoryIDtoColourMap();
+        org_name_box.setText(org.getOrganization_Name());
+    }
+
+    public void loadFromServer(Organization organization){
+        this.org = organization;
         refresh_floor_list();
         load_categories();
         generateCategoryIDtoColourMap();

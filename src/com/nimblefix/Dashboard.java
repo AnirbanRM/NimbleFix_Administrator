@@ -4,18 +4,14 @@ import com.nimblefix.ControlMessages.OrganizationsExchangerMessage;
 import com.nimblefix.core.Organization;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
+import javafx.scene.control.*;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -24,10 +20,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 
-import javax.swing.*;
-import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -211,13 +204,44 @@ public class Dashboard implements Initializable {
                 ((ListItem)newValue).getCell().setBackground(new Background(new BackgroundFill(Color.valueOf("#4D089A"),CornerRadii.EMPTY,Insets.EMPTY)));
             }
         });
-
     }
 
-    public void fabricate_clicked(MouseEvent mouseEvent) {
+    public void fabricate_clicked(MouseEvent mouseEvent) throws IOException {
         if(list.getSelectionModel().getSelectedIndex()>=0){
 
+            OrganizationsExchangerMessage organizationsExchangerMessage = new OrganizationsExchangerMessage(client.clientID,OrganizationsExchangerMessage.messageType.CLIENT_GET);
+            organizationsExchangerMessage.setBody(((ListItem)list.getSelectionModel().getSelectedItem()).getOrganizationID());
+
+            client.WRITER.writeObject(organizationsExchangerMessage);
+            Object organizationResponse = client.readNext();
+
+            if(organizationResponse instanceof OrganizationsExchangerMessage){
+                startFabricate(((OrganizationsExchangerMessage) organizationResponse).getOrganizations().get(0));
+            }
         }
+        else{
+            Alert a = new Alert(Alert.AlertType.ERROR ,null, ButtonType.OK);
+            a.setHeaderText("Please select an Organization to fabricate.");
+            a.setTitle("Error");
+            a.showAndWait();
+        }
+    }
+
+    private void startFabricate(Organization organization) throws IOException{
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("EditorUI.fxml"));
+        Parent root = loader.load();
+        Stage primaryStage= new Stage();
+        primaryStage.setTitle("Organization Fabricator");
+        primaryStage.setScene(new Scene(root, 1200, 700));
+
+        ((Editor)loader.getController()).curr_stg=primaryStage;
+        ((Editor)loader.getController()).client=client;
+        ((Editor)loader.getController()).loadFromServer(organization);
+
+        client.getCurrentShowingStage().hide();
+        client.setCurrentShowingStage(primaryStage);
+
+        primaryStage.show();
     }
 
     public void spectate_clicked(MouseEvent mouseEvent) {
