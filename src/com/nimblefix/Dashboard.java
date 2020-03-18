@@ -95,7 +95,6 @@ public class Dashboard implements Initializable {
         new_file_button.setOnMouseEntered(event -> {
             new_file_button.setTextFill(Color.valueOf("#0C7B93"));
             new_file_button.setUnderline(true);
-
         });
 
         new_file_button.setOnMouseExited(event -> {

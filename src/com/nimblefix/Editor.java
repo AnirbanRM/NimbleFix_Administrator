@@ -168,6 +168,29 @@ public class Editor implements Initializable {
         primaryStage.show();
     }
 
+    public void goBack(ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("DashboardUI.fxml"));
+        Parent root = loader.load();
+        Stage stage = new Stage();
+        stage.setTitle("Dashboard");
+        stage.setResizable(false);
+        stage.setScene(new Scene(root, 800, 500));
+        ((Dashboard)loader.getController()).curr_stg=stage;
+
+        StringBuilder sb = new StringBuilder();
+        for(char i : client.clientSocket.getRemoteSocketAddress().toString().substring(1).toCharArray())
+            if(i==':')break;
+            else
+                sb.append(i);
+
+        ((Dashboard)loader.getController()).setAddressandUserandClient(sb.toString(),client.clientID,client);
+
+        client.getCurrentShowingStage().hide();
+        client.setCurrentShowingStage(stage);
+
+        stage.show();
+    }
+
     public void quit(ActionEvent actionEvent) {
         curr_stg.close();
     }
@@ -379,6 +402,23 @@ public class Editor implements Initializable {
         if(category==null)return;
         about_title.setText(category.getDefaultTitle());
         about_desc.setText(category.getDefaultDescription());
+    }
+
+    public void saveQRCode(MouseEvent mouseEvent) {
+        if(current_selected_inventory==null)return;
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save QR Code");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image File (PNG)", "*.png"));
+        fileChooser.setInitialFileName(current_selected_inventory.getOui()+"_"+current_selected_inventory.getId()+".png");
+        File f = fileChooser.showSaveDialog(curr_stg);
+
+        if(f==null)return;
+
+        BufferedImage bI = SwingFXUtils.fromFXImage(current_selected_inventory.getQRCode() , null);
+        try {
+            ImageIO.write(bI, "png", f);
+        } catch (Exception e) { }
     }
 
     private void set_current_floor(String floor){

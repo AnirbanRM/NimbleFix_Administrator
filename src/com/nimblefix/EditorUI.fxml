@@ -14,14 +14,14 @@
             <items>
                 <MenuItem mnemonicParsing="false" onAction="#new_organization" text="New Organization" />
                 <MenuItem mnemonicParsing="false" onAction="#loadlocaldrive" text="Load from Local Drive" />
-                <MenuItem mnemonicParsing="false" text="Load from Server" />
                 <MenuItem mnemonicParsing="false" onAction="#SaveFile" text="Save to Local Drive" />
                 <MenuItem mnemonicParsing="false" onAction="#SaveAsFile" text="Save As to Local Drive" />
-                <MenuItem mnemonicParsing="false" onAction="#commit_server" text="Commit towards Server" />
+                <MenuItem mnemonicParsing="false" onAction="#commit_server" text="Commit to Server" />
                 <SeparatorMenuItem mnemonicParsing="false" />
                 <MenuItem mnemonicParsing="false" onAction="#add_Map" text="Attach/Modify Map" />
                 <MenuItem mnemonicParsing="false" onAction="#remove_map" text="Remove Map" />
-                <SeparatorMenuItem mnemonicParsing="false" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                <MenuItem mnemonicParsing="false" onAction="#goBack" text="Back to Dashboard" />
                 <MenuItem mnemonicParsing="false" onAction="#quit" text="Quit" />
             </items>
           </Menu>
@@ -58,7 +58,7 @@
                   <ImageView fx:id="about_qr" fitHeight="120.0" fitWidth="112.0" layoutX="241.0" layoutY="51.0" pickOnBounds="true" preserveRatio="true" />
                   <TextField fx:id="about_title" layoutX="14.0" layoutY="83.0" prefHeight="25.0" prefWidth="213.0" promptText="Title" />
                   <TextArea fx:id="about_desc" layoutX="14.0" layoutY="117.0" prefHeight="97.0" prefWidth="213.0" promptText="Description" />
-                  <Button fx:id="about_save" layoutX="243.0" layoutY="185.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="111.0" text="Save Image" />
+                  <Button fx:id="about_save" layoutX="243.0" layoutY="185.0" mnemonicParsing="false" onMouseClicked="#saveQRCode" prefHeight="25.0" prefWidth="111.0" text="Save Image" />
                   <ChoiceBox fx:id="about_category_dropdown" layoutX="14.0" layoutY="49.0" prefHeight="25.0" prefWidth="179.0" />
                   <Button fx:id="category_mutate_button" layoutX="194.0" layoutY="49.0" mnemonicParsing="false" onMouseClicked="#mutate_clicked" prefHeight="25.0" prefWidth="32.0" />
                </children></Pane>
