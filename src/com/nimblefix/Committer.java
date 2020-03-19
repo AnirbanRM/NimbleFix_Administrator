@@ -71,13 +71,14 @@ public class Committer implements Initializable {
 
     public void commit_clicked(MouseEvent mouseEvent) {
         OrganizationsExchangerMessage organizationsExchangerMessage = new OrganizationsExchangerMessage(client.clientID,OrganizationsExchangerMessage.messageType.CLIENT_POST);
-        organizationsExchangerMessage.addOrganization(this.selectedOrganization);
+        organizationsExchangerMessage.addOrganization(Committer.this.selectedOrganization);
 
         Thread writerthd = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    client.WRITER.writeObject(organizationsExchangerMessage);
+                    client.WRITER.reset();
+                    client.WRITER.writeUnshared(organizationsExchangerMessage);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

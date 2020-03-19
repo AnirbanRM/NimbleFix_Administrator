@@ -2,8 +2,10 @@ package com.nimblefix;
 
 import com.nimblefix.ControlMessages.OrganizationsExchangerMessage;
 import com.nimblefix.core.Organization;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -19,9 +21,10 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -67,6 +70,7 @@ public class Dashboard implements Initializable {
         public ListCell<ListItem> getCell() {
             return cell;
         }
+
     }
 
     public void setAddressandUserandClient(String address,String user,Client client){
@@ -131,15 +135,50 @@ public class Dashboard implements Initializable {
         primaryStage.show();
     }
 
+    public void load_file_clicked(MouseEvent mouseEvent) throws Exception {
+        FileChooser fileChooser = new FileChooser();
+        FileChooser.ExtensionFilter efil = new FileChooser.ExtensionFilter("NimbleFix Maps","*.nfxm");
+        fileChooser.getExtensionFilters().add(efil);
+        File f = fileChooser.showOpenDialog(curr_stg);
+        if(f==null)return;
+
+        FileInputStream fi = new FileInputStream(f);
+        ObjectInputStream oi = new ObjectInputStream(fi);
+        Organization org = (Organization) oi.readObject();
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("EditorUI.fxml"));
+        Parent root = loader.load();
+        Stage primaryStage= new Stage();
+        primaryStage.setTitle("Organization Fabricator");
+        primaryStage.setScene(new Scene(root, 1200, 700));
+        ((Editor)loader.getController()).curr_stg=primaryStage;
+
+        ((Editor)loader.getController()).client=client;
+        ((Editor)loader.getController()).loadFromOutside(org);
+
+        client.getCurrentShowingStage().hide();
+        client.setCurrentShowingStage(primaryStage);
+
+        primaryStage.show();
+
+    }
+
+
+
     public void fetchOrganizations() {
         Thread organizationFetcher = new Thread(new Runnable() {
             @Override
             public void run() {
                 OrganizationsExchangerMessage organizationsExchangerMessage = new OrganizationsExchangerMessage(user_label.getText(),OrganizationsExchangerMessage.messageType.CLIENT_QUERY);
                 try {
-                    client.WRITER.writeObject(organizationsExchangerMessage);
+                    client.WRITER.writeUnshared(organizationsExchangerMessage);
                     Object obj = client.readNext();
-                    addtoList((OrganizationsExchangerMessage)obj);
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            addtoList((OrganizationsExchangerMessage)obj);
+                        }
+                    });
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -181,28 +220,115 @@ public class Dashboard implements Initializable {
                     OrgNameLabel.setLayoutY(5);
                     OrgNameLabel.setLayoutX(5);
 
+                    Label l = new Label();
+                    l.setText("\uD83D\uDDD9");
+                    l.setFont(Font.font(15));
+                    l.setLayoutX(3);
+                    l.setLayoutY(-1);
+                    Pane delete_button = new Pane();
+                    delete_button.setPrefHeight(21);
+                    delete_button.setPrefWidth(21);
+                    delete_button.getChildren().add(l);
+                    delete_button.setLayoutX(280);
+                    delete_button.setLayoutY(18);
+
+                    delete_button.setOnMouseClicked(event -> {
+                        deleteOrganization(item.getOrganizationID());
+
+                    });
+
+                    l.setOnMouseEntered(event -> {
+                        if(isSelected()) {
+                            l.setTextFill(Color.valueOf("#000000"));
+                            delete_button.setBackground(new Background(new BackgroundFill(Color.valueOf("#ffffff"), new CornerRadii(20) , Insets.EMPTY)));
+                        }
+                        else {
+                            l.setTextFill(Color.valueOf("#ffffff"));
+                            delete_button.setBackground(new Background(new BackgroundFill(Color.valueOf("#4D089A"), new CornerRadii(20), Insets.EMPTY)));
+                        }
+                    });
+
+                    l.setOnMouseExited(event -> {
+                        if(isSelected()) {
+                            l.setTextFill(Color.valueOf("#ffffff"));
+                            delete_button.setBackground(new Background(new BackgroundFill(Color.valueOf("#4D089A"), new CornerRadii(20), Insets.EMPTY)));
+                        }
+                        else {
+                            l.setTextFill(Color.valueOf("#000000"));
+                            delete_button.setBackground(new Background(new BackgroundFill(Color.valueOf("#efefef"), new CornerRadii(20), Insets.EMPTY)));
+                        }
+                    });
+
                     OrgIDLabel.setText(item.getOrganizationID());
                     OrgNameLabel.setText(item.organizationName);
 
-                    p.getChildren().addAll(OrgNameLabel,OrgIDLabel);
+                    p.getChildren().addAll(OrgNameLabel,OrgIDLabel,delete_button);
 
                     setGraphic(p);
                 }
                 else{
                     setGraphic(null);
+                    setBackground(new Background(new BackgroundFill(Color.valueOf("#efefef"), CornerRadii.EMPTY, Insets.EMPTY)));
+                    setBorder(new Border(new BorderStroke(null,null,null,null)));
                 }
             }
         });
 
 
         list.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
+
+            private Pane getButton(Object x){
+                return (Pane)(((Pane) ((ListItem) x).getCell().getChildrenUnmodifiable().get(0)).getChildrenUnmodifiable().get(2));
+            }
+
+            private Label getLabel(Object x){
+                return (Label) (((Pane)(((Pane) ((ListItem) x).getCell().getChildrenUnmodifiable().get(0)).getChildrenUnmodifiable().get(2))).getChildrenUnmodifiable().get(0));
+            }
+
             @Override
             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-                if(oldValue!=null)
-                    ((ListItem)oldValue).getCell().setBackground(new Background(new BackgroundFill(Color.valueOf("#efefef"),CornerRadii.EMPTY,Insets.EMPTY)));
+                if(newValue==null)return;
+
+                Pane button = (Pane)(((Pane) ((ListItem) newValue).getCell().getChildrenUnmodifiable().get(0)).getChildrenUnmodifiable().get(2));
+                Label button_txt = (Label) button.getChildrenUnmodifiable().get(0);
+
+                if(oldValue!=null) {
+                    ((ListItem) oldValue).getCell().setBackground(new Background(new BackgroundFill(Color.valueOf("#efefef"), CornerRadii.EMPTY, Insets.EMPTY)));
+                    getButton(oldValue).setBackground(new Background(new BackgroundFill(Color.valueOf("#efefef"), new CornerRadii(20) , Insets.EMPTY)));
+                    getLabel(oldValue).setTextFill(Color.valueOf("#000000"));
+                }
                 ((ListItem)newValue).getCell().setBackground(new Background(new BackgroundFill(Color.valueOf("#4D089A"),CornerRadii.EMPTY,Insets.EMPTY)));
+                getButton(newValue).setBackground(new Background(new BackgroundFill(Color.valueOf("#4D089A"), new CornerRadii(20) , Insets.EMPTY)));
+                getLabel(newValue).setTextFill(Color.valueOf("#ffffff"));
             }
         });
+    }
+
+    private void deleteOrganization(String organizationID) {
+        OrganizationsExchangerMessage organizationsExchangerMessage = new OrganizationsExchangerMessage(client.clientID,OrganizationsExchangerMessage.messageType.CLIENT_DELETE);
+        organizationsExchangerMessage.setOrganizationOwner(client.clientID);
+        organizationsExchangerMessage.setBody(organizationID);
+
+        Thread del_thd = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    client.WRITER.writeUnshared(organizationsExchangerMessage);
+                    Object deleteReply = client.readNext();
+                    if(deleteReply instanceof OrganizationsExchangerMessage && ((OrganizationsExchangerMessage) deleteReply).getBody().equals("SUCCESS")){
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                list.getItems().clear();
+                                prepareListView();
+                                fetchOrganizations();
+                            }
+                        });
+                    }
+                } catch (IOException e) { }
+            }
+        });
+        del_thd.start();
     }
 
     public void fabricate_clicked(MouseEvent mouseEvent) throws IOException {
@@ -211,7 +337,7 @@ public class Dashboard implements Initializable {
             OrganizationsExchangerMessage organizationsExchangerMessage = new OrganizationsExchangerMessage(client.clientID,OrganizationsExchangerMessage.messageType.CLIENT_GET);
             organizationsExchangerMessage.setBody(((ListItem)list.getSelectionModel().getSelectedItem()).getOrganizationID());
 
-            client.WRITER.writeObject(organizationsExchangerMessage);
+            client.WRITER.writeUnshared(organizationsExchangerMessage);
             Object organizationResponse = client.readNext();
 
             if(organizationResponse instanceof OrganizationsExchangerMessage){
@@ -235,7 +361,7 @@ public class Dashboard implements Initializable {
 
         ((Editor)loader.getController()).curr_stg=primaryStage;
         ((Editor)loader.getController()).client=client;
-        ((Editor)loader.getController()).loadFromServer(organization);
+        ((Editor)loader.getController()).loadFromOutside(organization);
 
         client.getCurrentShowingStage().hide();
         client.setCurrentShowingStage(primaryStage);

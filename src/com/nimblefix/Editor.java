@@ -121,7 +121,7 @@ public class Editor implements Initializable {
         org_name_box.setText(org.getOrganization_Name());
     }
 
-    public void loadFromServer(Organization organization){
+    public void loadFromOutside(Organization organization){
         this.org = organization;
         refresh_floor_list();
         load_categories();

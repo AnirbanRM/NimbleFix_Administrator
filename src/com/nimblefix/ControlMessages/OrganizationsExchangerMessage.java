@@ -1,6 +1,7 @@
 package com.nimblefix.ControlMessages;
 
 import com.nimblefix.core.Organization;
+import javafx.scene.paint.Color;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -13,11 +14,13 @@ public class OrganizationsExchangerMessage implements Serializable {
     int messageType;
     String body;
 
-    public static class messageType{
+    public class messageType{
         public final static int CLIENT_QUERY = 0;
         public final static int CLIENT_POST = 1;
         public final static int CLIENT_GETALL = 2;
         public final static int CLIENT_GET = 3;
+        public final static int CLIENT_DELETE = 4;
+        public final static int CLIENT_DELETEALL = 5;
     }
 
     public OrganizationsExchangerMessage(String organizationOwner,int messageType){

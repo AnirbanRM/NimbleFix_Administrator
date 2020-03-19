@@ -73,7 +73,7 @@ public class Client {
     public Object readNext() {
         Object receivedObject=null;
         try {
-            receivedObject = READER.readObject();
+            receivedObject = READER.readUnshared();
         } catch (Exception e) { }
         return receivedObject;
     }
@@ -81,7 +81,7 @@ public class Client {
     private void handleAuthentication(AuthenticationMessage authmsg) {
         if(authmsg.getSource()==AuthenticationMessage.Server&&authmsg.getMessageType()==AuthenticationMessage.Challenge){
             authmsg = new AuthenticationMessage(AuthenticationMessage.Staff,AuthenticationMessage.Response,clientID,password);
-            try{WRITER.writeObject(authmsg); authmsg = (AuthenticationMessage) READER.readObject(); }catch (Exception e){ }
+            try{WRITER.writeUnshared(authmsg); authmsg = (AuthenticationMessage) READER.readUnshared(); }catch (Exception e){ }
             if(authmsg.getMESSAGEBODY().equals("SUCCESS"))
                 Platform.runLater(new Runnable() {
                     @Override
