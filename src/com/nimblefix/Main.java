@@ -18,9 +18,6 @@ public class Main extends Application {
 
         ((LoginUIController)loader.getController()).curr_stg = primaryStage;
         primaryStage.show();
-
-
-
     }
 
     public static void main(String[] args) {

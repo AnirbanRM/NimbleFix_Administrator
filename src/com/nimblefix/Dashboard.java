@@ -1,11 +1,11 @@
 package com.nimblefix;
 
+import com.nimblefix.ControlMessages.MonitorMessage;
 import com.nimblefix.ControlMessages.OrganizationsExchangerMessage;
 import com.nimblefix.core.Organization;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -126,6 +126,8 @@ public class Dashboard implements Initializable {
         Stage primaryStage= new Stage();
         primaryStage.setTitle("Organization Fabricator");
         primaryStage.setScene(new Scene(root, 1200, 700));
+        primaryStage.setMinHeight(700);
+        primaryStage.setMinWidth(1200);
         ((Editor)loader.getController()).curr_stg=primaryStage;
         ((Editor)loader.getController()).client=client;
 
@@ -151,6 +153,8 @@ public class Dashboard implements Initializable {
         Stage primaryStage= new Stage();
         primaryStage.setTitle("Organization Fabricator");
         primaryStage.setScene(new Scene(root, 1200, 700));
+        primaryStage.setMinHeight(700);
+        primaryStage.setMinWidth(1200);
         ((Editor)loader.getController()).curr_stg=primaryStage;
 
         ((Editor)loader.getController()).client=client;
@@ -358,6 +362,8 @@ public class Dashboard implements Initializable {
         Stage primaryStage= new Stage();
         primaryStage.setTitle("Organization Fabricator");
         primaryStage.setScene(new Scene(root, 1200, 700));
+        primaryStage.setMinHeight(700);
+        primaryStage.setMinWidth(1200);
 
         ((Editor)loader.getController()).curr_stg=primaryStage;
         ((Editor)loader.getController()).client=client;
@@ -369,10 +375,49 @@ public class Dashboard implements Initializable {
         primaryStage.show();
     }
 
-    public void spectate_clicked(MouseEvent mouseEvent) {
+    public void spectate_clicked(MouseEvent mouseEvent) throws IOException {
+        if(list.getSelectionModel().getSelectedIndex()>=0){
+
+            MonitorMessage monitorMessage = new MonitorMessage(client.clientID, ((ListItem) list.getSelectionModel().getSelectedItem()).getOrganizationID(),MonitorMessage.MessageType.CLIENT_MONITOR_START);
+            client.WRITER.writeUnshared(monitorMessage);
+            Object monitorResponse = client.readNext();
+
+            if(monitorResponse instanceof MonitorMessage){
+                try {
+                    startSpectate((MonitorMessage) monitorResponse);
+                }catch (Exception e){ }
+            }
+        }
+        else{
+            Alert a = new Alert(Alert.AlertType.ERROR ,null, ButtonType.OK);
+            a.setHeaderText("Please select an Organization to spectate.");
+            a.setTitle("Error");
+            a.showAndWait();
+        }
     }
 
+    private void startSpectate(MonitorMessage monitorMessage) throws Exception{
+        if(monitorMessage.getOrganization()!=null) {
 
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("SpectatorUI.fxml"));
+            Parent root = loader.load();
+            Stage primaryStage = new Stage();
+            primaryStage.setTitle("Organization Spectator");
+            primaryStage.setScene(new Scene(root, 1200, 700));
+            primaryStage.setMinHeight(700);
+            primaryStage.setMinWidth(1200);
+
+            ((Spectator) loader.getController()).curr_stg = primaryStage;
+            ((Spectator) loader.getController()).client = client;
+            ((Spectator) loader.getController()).load(monitorMessage.getOrganization());
+            ((Spectator) loader.getController()).startComplaintListener();
+
+            client.getCurrentShowingStage().hide();
+            client.setCurrentShowingStage(primaryStage);
+
+            primaryStage.show();
+        }
+    }
 }
 
 

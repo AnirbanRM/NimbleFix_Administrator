@@ -1,6 +1,7 @@
 package com.nimblefix;
 
 import com.nimblefix.ControlMessages.AuthenticationMessage;
+import com.sun.org.apache.regexp.internal.RE;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;

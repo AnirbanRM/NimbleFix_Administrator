@@ -6,9 +6,9 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<Pane prefHeight="700.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.nimblefix.Editor">
+<AnchorPane prefHeight="700.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.nimblefix.Editor">
    <children>
-      <MenuBar layoutY="2.0" prefHeight="25.0" prefWidth="1200.0">
+      <MenuBar layoutY="2.0" prefHeight="25.0" prefWidth="1200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="2.0">
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
@@ -33,12 +33,12 @@
           </Menu>
         </menus>
       </MenuBar>
-      <ScrollPane fx:id="canvas_container" layoutX="198.0" layoutY="65.0" prefHeight="636.0" prefWidth="1002.0">
+      <ScrollPane fx:id="canvas_container" layoutX="198.0" layoutY="65.0" prefHeight="636.0" prefWidth="1002.0" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="198.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="65.0">
          <content>
             <Canvas fx:id="canvas" height="620.0" onMouseClicked="#place_inventory" onMouseDragged="#node_movement" onMousePressed="#mouse_down" width="1000.0" />
          </content>
       </ScrollPane>
-      <ListView fx:id="floor_list" layoutY="264.0" prefHeight="438.0" prefWidth="199.0" />
+      <ListView fx:id="floor_list" layoutY="264.0" prefHeight="438.0" prefWidth="199.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="262.0" />
       <Label layoutX="11.0" layoutY="239.0" text="Floors" />
       <Button fx:id="place_inventory_button" layoutX="9.0" layoutY="77.0" mnemonicParsing="false" onMouseClicked="#add_inventory" prefHeight="25.0" prefWidth="179.0" text="Place Inventory" />
       <Button fx:id="delete_inventory_button" disable="true" layoutX="10.0" layoutY="108.0" mnemonicParsing="false" onMouseClicked="#delete_inventory" prefHeight="25.0" prefWidth="179.0" text="Delete Inventory" />
@@ -50,7 +50,7 @@
             <Font name="System Bold" size="18.0" />
          </font>
       </Label>
-      <TitledPane fx:id="about_inventory_pane" alignment="CENTER_RIGHT" animated="false" expanded="false" layoutX="821.0" layoutY="34.0" prefHeight="27.0" prefWidth="368.0" text="About Inventory">
+      <TitledPane fx:id="about_inventory_pane" alignment="CENTER_RIGHT" animated="false" expanded="false" layoutX="821.0" layoutY="34.0" prefHeight="27.0" prefWidth="368.0" text="About Inventory" AnchorPane.rightAnchor="11.0">
          <content>
             <Pane prefHeight="0.0" prefWidth="366.0">
                <children>
@@ -64,7 +64,7 @@
                </children></Pane>
          </content>
       </TitledPane>
-      <CheckBox fx:id="auto_exp_check" layoutX="715.0" layoutY="39.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="98.0" text="Auto Expand" />
+      <CheckBox fx:id="auto_exp_check" layoutX="715.0" layoutY="39.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="98.0" text="Auto Expand" AnchorPane.rightAnchor="387.0" />
       <Button layoutX="10.0" layoutY="150.0" mnemonicParsing="false" onMouseClicked="#manage_category" prefHeight="25.0" prefWidth="179.0" text="Manage Inventory Category" />
    </children>
-</Pane>
+</AnchorPane>
