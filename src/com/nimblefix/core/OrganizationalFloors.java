@@ -3,13 +3,14 @@ package com.nimblefix.core;
 import java.awt.*;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class OrganizationalFloors implements Serializable {
 
     String floorID;
     byte[] background_map=null;
 
-    ArrayList<InventoryItem> inventories = new ArrayList<InventoryItem>();
+    ConcurrentHashMap<String,InventoryItem> inventories = new ConcurrentHashMap<String,InventoryItem>();
 
     public OrganizationalFloors(String floorID){
         this.floorID = floorID;
@@ -31,35 +32,28 @@ public class OrganizationalFloors implements Serializable {
         this.floorID=floorID;
     }
 
-    public ArrayList<InventoryItem> getInventories(){
+    public ConcurrentHashMap<String,InventoryItem> getInventories(){
         return this.inventories;
     }
 
-    public InventoryItem getInventoryItem(int index){
-        return inventories.get(index);
-    }
-
     public InventoryItem getInventoryItem(InventoryItem.Location l){
-        for(InventoryItem i : inventories){
-            if(Math.abs(i.location.X-l.X)<=5&&Math.abs(i.location.Y-l.Y)<=5)
-                return i;
+        for(String item  : inventories.keySet()){
+            if(Math.abs(inventories.get(item).location.X-l.X)<=5&&Math.abs(inventories.get(item).location.Y-l.Y)<=5)
+                return inventories.get(item);
         }
         return null;
     }
 
     public void addInventoryItem(InventoryItem item){
-        inventories.add(item);
+        inventories.put(item.getId(),item);
     }
 
     public int inventoryCount(){
         return inventories.size();
     }
 
-    public void removeInventory(int index){
-        inventories.remove(index);
-    }
 
     public void removeInventory(InventoryItem inventoryItem){
-        inventories.remove(inventoryItem);
+        inventories.remove(inventoryItem.getId());
     }
 }

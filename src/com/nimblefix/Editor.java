@@ -33,6 +33,7 @@ import java.io.*;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.ResourceBundle;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Editor implements Initializable {
     public Stage curr_stg;
@@ -481,19 +482,20 @@ public class Editor implements Initializable {
         }
 
         if(current_selected_floor!=null) {
-            for (InventoryItem i : current_selected_floor.getInventories()) {
-                if (i.equals(current_selected_inventory)) {
+            ConcurrentHashMap<String,InventoryItem> inventories = current_selected_floor.getInventories();
+            for (String invKey : inventories.keySet()) {
+                if (inventories.get(invKey).equals(current_selected_inventory)) {
                     painter.setFill(Color.valueOf("#000000"));
-                    painter.fillOval(i.getLocation().getX() - 5, i.getLocation().getY() - 5, 10, 10);
+                    painter.fillOval(inventories.get(invKey).getLocation().getX() - 5, inventories.get(invKey).getLocation().getY() - 5, 10, 10);
                     painter.setLineWidth(1);
-                    painter.strokeOval(i.getLocation().getX() - 7, i.getLocation().getY() - 7, 14, 14);
-                    painter.strokeOval(i.getLocation().getX() - 9, i.getLocation().getY() - 9, 18, 18);
-                    painter.strokeOval(i.getLocation().getX() - 11, i.getLocation().getY() - 11, 22, 22);
+                    painter.strokeOval(inventories.get(invKey).getLocation().getX() - 7, inventories.get(invKey).getLocation().getY() - 7, 14, 14);
+                    painter.strokeOval(inventories.get(invKey).getLocation().getX() - 9, inventories.get(invKey).getLocation().getY() - 9, 18, 18);
+                    painter.strokeOval(inventories.get(invKey).getLocation().getX() - 11, inventories.get(invKey).getLocation().getY() - 11, 22, 22);
                 } else {
-                    String colorHex = categoryToColourMap.get(i.getCategoryTag());
+                    String colorHex = categoryToColourMap.get(inventories.get(invKey).getCategoryTag());
                     if (colorHex == null) colorHex = "#314cb6";
                     painter.setFill(Color.valueOf(colorHex));
-                    painter.fillOval(i.getLocation().getX() - 5, i.getLocation().getY() - 5, 10, 10);
+                    painter.fillOval(inventories.get(invKey).getLocation().getX() - 5, inventories.get(invKey).getLocation().getY() - 5, 10, 10);
                 }
             }
         }
