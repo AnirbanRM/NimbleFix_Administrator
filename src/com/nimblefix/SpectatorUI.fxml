@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.canvas.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
 <AnchorPane prefHeight="700.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.nimblefix.Spectator">
    <children>
@@ -24,13 +26,22 @@
           </Menu>
         </menus>
       </MenuBar>
-      <ListView fx:id="floorlistview" layoutY="24.0" prefHeight="676.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="24.0" />
-      <AnchorPane layoutX="201.0" layoutY="25.0" prefHeight="52.0" prefWidth="999.0" style="-fx-background-color: #ffffff;" AnchorPane.leftAnchor="201.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0" />
-      <ScrollPane layoutX="200.0" layoutY="78.0" prefHeight="540.0" prefWidth="1006.0" AnchorPane.bottomAnchor="82.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="78.0">
-        <content>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
-        </content>
+      <ListView fx:id="floorlistview" focusTraversable="false" layoutY="24.0" prefHeight="676.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="24.0" />
+      <AnchorPane layoutX="201.0" layoutY="25.0" prefHeight="52.0" prefWidth="999.0" style="-fx-background-color: #ffffff;" AnchorPane.leftAnchor="201.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0">
+         <children>
+            <Label fx:id="organization_name_box" layoutX="14.0" layoutY="-4.0" prefHeight="35.0" prefWidth="835.0" text="Organization" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="150.0" AnchorPane.topAnchor="-4.0">
+               <font>
+                  <Font name="System Bold" size="20.0" />
+               </font>
+            </Label>
+            <Label fx:id="oui_box" alignment="CENTER_RIGHT" layoutX="848.0" layoutY="18.0" prefHeight="17.0" prefWidth="137.0" text="XXXXXXXXXXXXXX" AnchorPane.bottomAnchor="17.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="18.0" />
+            <Label fx:id="floor_id_box" layoutX="14.0" layoutY="33.0" text="No floor selected" />
+         </children></AnchorPane>
+      <ScrollPane focusTraversable="false" layoutX="200.0" layoutY="78.0" prefHeight="540.0" prefWidth="1006.0" AnchorPane.bottomAnchor="82.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="78.0">
+         <content>
+            <Canvas fx:id="canvas" height="620.0" width="1000.0" />
+         </content>
       </ScrollPane>
-      <ListView fx:id="complaintlistview" layoutX="199.0" layoutY="682.0" nodeOrientation="LEFT_TO_RIGHT" orientation="HORIZONTAL" prefHeight="84.0" prefWidth="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="199.0" AnchorPane.rightAnchor="0.0" />
+      <ListView fx:id="complaintlistview" focusTraversable="false" layoutX="199.0" layoutY="682.0" nodeOrientation="LEFT_TO_RIGHT" orientation="HORIZONTAL" prefHeight="84.0" prefWidth="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="199.0" AnchorPane.rightAnchor="0.0" />
    </children>
 </AnchorPane>

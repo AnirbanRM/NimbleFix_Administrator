@@ -144,6 +144,7 @@ public class Editor implements Initializable {
         FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("NimbleFix Maps (*.nfxm)", "*.nfxm");
         fileChooser.getExtensionFilters().add(extFilter);
         File file = fileChooser.showSaveDialog(curr_stg);
+        if(file==null)return;
         if(file.exists())file.delete();
         if(file != null){
             FileOutputStream fo = new FileOutputStream(file);
