@@ -1,10 +1,7 @@
 package com.nimblefix;
 
 import com.nimblefix.ControlMessages.ComplaintMessage;
-import com.nimblefix.core.Complaint;
-import com.nimblefix.core.InventoryItem;
-import com.nimblefix.core.Organization;
-import com.nimblefix.core.OrganizationalFloors;
+import com.nimblefix.core.*;
 import com.sun.scenario.effect.Flood;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -16,10 +13,10 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
+import javafx.scene.control.*;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -37,6 +34,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -111,18 +109,122 @@ public class Spectator implements Initializable {
     @FXML ListView complaintlistview, floorlistview;
     @FXML Canvas canvas;
     @FXML Label oui_box, organization_name_box,floor_id_box;
+    @FXML AnchorPane canvas_field;
+    Pane info_pane;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         prepareComplaintListView();
         prepareFloorListView();
+        canvas.setOnMouseMoved(canvashovered);
+
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
                 refresh_floor_list();
                 redraw();
+
+                info_pane = new Pane();
+                info_pane.setMinWidth(300);
+                info_pane.setMinHeight(100);
+                info_pane.setLayoutX(100);
+                info_pane.setLayoutY(100);
+                info_pane.setBorder(new Border(new BorderStroke(Color.valueOf("#bcbcbc"),BorderStrokeStyle.SOLID, new CornerRadii(10) ,BorderWidths.DEFAULT,Insets.EMPTY)));
+                info_pane.setEffect(new DropShadow(2, Color.valueOf("#aaaaaa")));
+
+                Label title = new Label();
+                title.setFont(Font.font(null,FontWeight.BOLD,15));
+                title.setTextFill(Color.valueOf("#ffffff"));
+                title.setText("Title");
+                title.setMaxWidth(270);
+                title.setLayoutX(10);
+                title.setLayoutY(10);
+
+                Label category = new Label();
+                category.setFont(Font.font(null,FontWeight.SEMI_BOLD,12));
+                category.setTextFill(Color.valueOf("#ffffff"));
+                category.setText("Category");
+                category.setMaxWidth(270);
+                category.setLayoutX(10);
+                category.setLayoutY(30);
+
+                Label desc = new Label();
+                desc.setFont(Font.font(null,FontWeight.NORMAL,12));
+                desc.setTextFill(Color.valueOf("#ffffff"));
+                desc.setText("Description");
+                desc.setLayoutX(10);
+                desc.setLayoutY(50);
+                desc.setWrapText(true);
+                desc.setMaxHeight(50);
+                desc.setMaxWidth(270);
+                desc.setText("Description");
+
+                info_pane.getChildren().addAll(title,category,desc);
             }
         });
+    }
+
+    InventoryItem[][] currentFloorInventoryPoints;
+    InventoryItem currentHoveringInventory = null;
+    private void generatePointsMap(OrganizationalFloors organizationalFloor){
+        if(floor_background_image!=null)
+            currentFloorInventoryPoints = new InventoryItem[(int)floor_background_image.getHeight()][(int)floor_background_image.getWidth()];
+        else
+            currentFloorInventoryPoints = new InventoryItem[620][1000];
+        int radius = 5;
+        for(InventoryItem i : organizationalFloor.getInventories().values()){
+
+            //Runs with O(1)
+            for(int z = (int)i.getLocation().getY()-radius; z<=(int)i.getLocation().getY()+radius; z++)
+                for(int zz = (int)i.getLocation().getX()-radius; zz<=(int)i.getLocation().getX()+radius; zz++)
+                    try{
+                        currentFloorInventoryPoints[z][zz] = i;
+                    }catch (ArrayIndexOutOfBoundsException e){ }
+        }
+    }
+
+    EventHandler<MouseEvent> canvashovered = new EventHandler<MouseEvent>() {
+        @Override
+        public void handle(MouseEvent event) {
+            if (currentFloorInventoryPoints == null)
+                return;
+
+            InventoryItem i = currentFloorInventoryPoints[(int) event.getY()][(int) event.getX()];
+            if (i != null) {
+                if (i.equals(currentHoveringInventory)) return;
+                currentHoveringInventory = i;
+
+            } else {
+                currentHoveringInventory = null;
+                canvas_field.getChildren().removeAll(info_pane);
+                return;
+            }
+
+            info_pane.setLayoutX(event.getX()+10);
+            info_pane.setLayoutY(event.getY()+10);
+
+            ((Label)info_pane.getChildren().get(0)).setText(i.getTitle());
+            String category = "No category";
+            for(Category c : current_organization.getCategories())
+                if(c.getUniqueID().equals(i.getCategoryTag()))
+                    category = c.getCategoryString();
+            ((Label)info_pane.getChildren().get(1)).setText(category);
+            ((Label)info_pane.getChildren().get(2)).setText(i.getDescription());
+            if(isOK(i))
+                info_pane.setBackground(new Background(new BackgroundFill(Color.valueOf("#2C9F5E") ,new CornerRadii(10) ,Insets.EMPTY )));
+            else
+                info_pane.setBackground(new Background(new BackgroundFill(Color.valueOf("#d41616") ,new CornerRadii(10) ,Insets.EMPTY )));
+
+            canvas_field.getChildren().addAll(info_pane);
+        }
+    };
+
+    ArrayList<InventoryItem> defectiveitems = new ArrayList<InventoryItem>();
+    private boolean isOK(InventoryItem i){
+        if(defectiveitems.contains(i))
+            return false;
+        else
+            return true;
     }
 
     private void prepareFloorListView() {
@@ -196,6 +298,7 @@ public class Spectator implements Initializable {
             }catch(Exception e){}
         }
 
+        generatePointsMap(this.current_organization.getFloor(floor));
         redraw();
     }
 
@@ -295,8 +398,33 @@ public class Spectator implements Initializable {
     }
 
     private void handle_complaint (ComplaintMessage complaint){
-        System.out.println(complaint);
+        String floorid=null;
+        InventoryItem item=null;
+        for(OrganizationalFloors of : current_organization.getFloors()){
+            item = of.getInventories().get(complaint.getComplaint().getInventoryID());
+            if(item!=null) {
+                floorid = of.getFloorID();
+                break;
+            }
+        }
 
+        if(item==null||floorid==null)return;
+
+        final InventoryItem temp1 = item;
+        final String temp2=floorid;
+        Platform.runLater(() -> { complaintlistview.getItems().add(new ComplaintListItem(temp2,complaint.getComplaint(),temp1)); });
+
+        for(Object floorListItem : floorlistview.getItems()){
+            if( ((Label)(((Pane) ((FloorListItem)floorListItem).cell.getGraphic()).getChildrenUnmodifiable().get(0))).getText().equals(floorid) )
+                Platform.runLater(() -> {
+                    ((FloorListItem)floorListItem).setProblems(((FloorListItem)floorListItem).problems+1);
+                });
+        }
+
+        if(isOK(item))
+            defectiveitems.add(item);
+        if(current_selected_floor!=null && current_selected_floor.equals(current_organization.getFloor(floorid)))
+            redraw();
     }
 
     public void load (Organization organization){
@@ -325,9 +453,14 @@ public class Spectator implements Initializable {
         if(current_selected_floor!=null) {
             ConcurrentHashMap<String,InventoryItem> inventories = current_selected_floor.getInventories();
             for (String invKey : inventories.keySet()) {
-                painter.setFill(Color.valueOf("#00bd56"));
+                String color;
+                if(isOK(inventories.get(invKey)))
+                    color = "#00bd56";
+                else
+                    color = "#d41616";
+                painter.setFill(Color.valueOf(color));
                 painter.fillOval(inventories.get(invKey).getLocation().getX() - 5, inventories.get(invKey).getLocation().getY() - 5, 10, 10);
-                painter.setStroke(Color.valueOf("#00bd56"));
+                painter.setStroke(Color.valueOf(color));
                 painter.setLineWidth(2);
                 painter.strokeOval(inventories.get(invKey).getLocation().getX() - 8, inventories.get(invKey).getLocation().getY() - 8, 16, 16);
             }

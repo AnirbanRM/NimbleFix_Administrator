@@ -39,7 +39,11 @@
          </children></AnchorPane>
       <ScrollPane focusTraversable="false" layoutX="200.0" layoutY="78.0" prefHeight="540.0" prefWidth="1006.0" AnchorPane.bottomAnchor="82.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="78.0">
          <content>
-            <Canvas fx:id="canvas" height="620.0" width="1000.0" />
+            <AnchorPane fx:id="canvas_field" prefHeight="200.0" prefWidth="200.0">
+               <children>
+                  <Canvas fx:id="canvas" height="620.0" width="1000.0" />
+               </children>
+            </AnchorPane>
          </content>
       </ScrollPane>
       <ListView fx:id="complaintlistview" focusTraversable="false" layoutX="199.0" layoutY="682.0" nodeOrientation="LEFT_TO_RIGHT" orientation="HORIZONTAL" prefHeight="84.0" prefWidth="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="199.0" AnchorPane.rightAnchor="0.0" />
