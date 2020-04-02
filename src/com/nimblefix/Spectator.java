@@ -2,15 +2,17 @@ package com.nimblefix;
 
 import com.nimblefix.ControlMessages.ComplaintMessage;
 import com.nimblefix.core.*;
-import com.sun.scenario.effect.Flood;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
@@ -24,15 +26,10 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
-import sun.font.FontFamily;
 
-import javax.annotation.processing.SupportedSourceVersion;
 import javax.imageio.ImageIO;
-import javax.jws.Oneway;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -160,8 +157,20 @@ public class Spectator implements Initializable {
                 desc.setText("Description");
 
                 info_pane.getChildren().addAll(title,category,desc);
+
+                new Thread(() -> getPreviousComplaints()).start();
             }
         });
+    }
+
+    private void getPreviousComplaints() {
+        ComplaintMessage complaintMessage = new ComplaintMessage(new ArrayList<Complaint>());
+        complaintMessage.setBody("GET:"+current_organization.getOui());
+
+        try {
+            client.WRITER.reset();
+            client.WRITER.writeUnshared(complaintMessage);
+        }catch (Exception e){ }
     }
 
     InventoryItem[][] currentFloorInventoryPoints;
@@ -338,6 +347,28 @@ public class Spectator implements Initializable {
                     item.cell=this;
                     p.getChildren().addAll(floorLabel,invIDLabel,commplDateLabel);
                     setGraphic(p);
+
+                    setOnMouseClicked(new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent event) {
+                            if(event.getClickCount()==2){
+                                try {
+                                    FXMLLoader loader = new FXMLLoader(getClass().getResource("AboutComplaintUI.fxml"));
+                                    Parent root = null;
+                                    root = loader.load();
+                                    ((AboutComplaint)loader.getController()).setParam(getItem().getComplaint(),getItem().getInventoryItem(),current_organization.getCategories());
+                                    Stage primaryStage= new Stage();
+                                    primaryStage.setTitle("Complaint " + item.complaint.getInventoryID());
+                                    primaryStage.setScene(new Scene(root, 940, 590));
+                                    primaryStage.setResizable(false);
+                                    primaryStage.show();
+
+                                    ((AboutComplaint)loader.getController()).init();
+                                } catch (IOException e) { System.out.println(e.getMessage().toString());}
+                            }
+                        }
+                    });
+
                 } else {
                     setGraphic(null);
                     setBackground(new Background(new BackgroundFill(Color.valueOf("#efefef"), CornerRadii.EMPTY, Insets.EMPTY)));
@@ -354,8 +385,8 @@ public class Spectator implements Initializable {
                 ((ComplaintListItem)newValue).cell.setBackground(new Background(new BackgroundFill(Color.valueOf("#ddddee"),CornerRadii.EMPTY,Insets.EMPTY)));
             }
         });
-    }
 
+    }
 
     public void startComplaintListener () {
 
@@ -398,33 +429,45 @@ public class Spectator implements Initializable {
     }
 
     private void handle_complaint (ComplaintMessage complaint){
-        String floorid=null;
-        InventoryItem item=null;
-        for(OrganizationalFloors of : current_organization.getFloors()){
-            item = of.getInventories().get(complaint.getComplaint().getInventoryID());
-            if(item!=null) {
-                floorid = of.getFloorID();
-                break;
+        if(complaint.getBody()!=null && complaint.getBody().substring(0,3).equals("GET")){
+
+            for(Complaint msg : complaint.getComplaints()){
+                Platform.runLater(() -> {handle_complaint(new ComplaintMessage(msg)); });
             }
+
         }
+        else {
 
-        if(item==null||floorid==null)return;
+            String floorid = null;
+            InventoryItem item = null;
+            for (OrganizationalFloors of : current_organization.getFloors()) {
+                item = of.getInventories().get(complaint.getComplaint().getInventoryID());
+                if (item != null) {
+                    floorid = of.getFloorID();
+                    break;
+                }
+            }
 
-        final InventoryItem temp1 = item;
-        final String temp2=floorid;
-        Platform.runLater(() -> { complaintlistview.getItems().add(new ComplaintListItem(temp2,complaint.getComplaint(),temp1)); });
+            if (item == null || floorid == null) return;
 
-        for(Object floorListItem : floorlistview.getItems()){
-            if( ((Label)(((Pane) ((FloorListItem)floorListItem).cell.getGraphic()).getChildrenUnmodifiable().get(0))).getText().equals(floorid) )
-                Platform.runLater(() -> {
-                    ((FloorListItem)floorListItem).setProblems(((FloorListItem)floorListItem).problems+1);
-                });
+            final InventoryItem temp1 = item;
+            final String temp2 = floorid;
+            Platform.runLater(() -> {
+                complaintlistview.getItems().add(new ComplaintListItem(temp2, complaint.getComplaint(), temp1));
+            });
+
+            for (Object floorListItem : floorlistview.getItems()) {
+                if (((Label) (((Pane) ((FloorListItem) floorListItem).cell.getGraphic()).getChildrenUnmodifiable().get(0))).getText().equals(floorid))
+                    Platform.runLater(() -> {
+                        ((FloorListItem) floorListItem).setProblems(((FloorListItem) floorListItem).problems + 1);
+                    });
+            }
+
+            if (isOK(item))
+                defectiveitems.add(item);
+            if (current_selected_floor != null && current_selected_floor.equals(current_organization.getFloor(floorid)))
+                redraw();
         }
-
-        if(isOK(item))
-            defectiveitems.add(item);
-        if(current_selected_floor!=null && current_selected_floor.equals(current_organization.getFloor(floorid)))
-            redraw();
     }
 
     public void load (Organization organization){

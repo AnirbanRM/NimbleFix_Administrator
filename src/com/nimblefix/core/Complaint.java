@@ -9,8 +9,6 @@ import java.util.TimeZone;
 
 public class Complaint implements Serializable {
 
-    private String complaintID;
-
     private String organizationID;
     private String inventoryID;
 
@@ -147,11 +145,9 @@ public class Complaint implements Serializable {
         this.dbID = dbID;
     }
 
-    public String getComplaintID() {
-        return complaintID;
+    public String getComplaintID(){
+        return "COMP"+  String.format("%010d", Long.parseLong(dbID));
+
     }
 
-    public void setComplaintID(String complaintID) {
-        this.complaintID = complaintID;
-    }
 }

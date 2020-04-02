@@ -31,7 +31,7 @@ import java.util.ResourceBundle;
 public class Dashboard implements Initializable {
     @FXML Label icon1,icon2,connected_label,user_label,new_file_button,load_file_button;
     @FXML ImageView logo_box,logo3,logo4;
-    @FXML Pane fabricate_button,spectate_button;
+    @FXML Pane fabricate_button,spectate_button,workerMgmt;
     @FXML ListView list;
 
     public Stage curr_stg;
@@ -90,9 +90,13 @@ public class Dashboard implements Initializable {
 
         fabricate_button.setOnMouseEntered(event -> fabricate_button.setBackground(new Background(new BackgroundFill(Color.valueOf("#4D089A"), CornerRadii.EMPTY, Insets.EMPTY))));
 
+        workerMgmt.setOnMouseEntered(event -> workerMgmt.setBackground(new Background(new BackgroundFill(Color.valueOf("#4D089A"), CornerRadii.EMPTY, Insets.EMPTY))));
+
         spectate_button.setOnMouseEntered(event -> spectate_button.setBackground(new Background(new BackgroundFill(Color.valueOf("#4D089A"), CornerRadii.EMPTY, Insets.EMPTY))));
 
         fabricate_button.setOnMouseExited(event -> fabricate_button.setBackground(new Background(new BackgroundFill(Color.valueOf("#320670"), CornerRadii.EMPTY, Insets.EMPTY))));
+
+        workerMgmt.setOnMouseExited(event -> workerMgmt.setBackground(new Background(new BackgroundFill(Color.valueOf("#320670"), CornerRadii.EMPTY, Insets.EMPTY))));
 
         spectate_button.setOnMouseExited(event -> spectate_button.setBackground(new Background(new BackgroundFill(Color.valueOf("#320670"), CornerRadii.EMPTY, Insets.EMPTY))));
 
@@ -351,6 +355,32 @@ public class Dashboard implements Initializable {
         else{
             Alert a = new Alert(Alert.AlertType.ERROR ,null, ButtonType.OK);
             a.setHeaderText("Please select an Organization to fabricate.");
+            a.setTitle("Error");
+            a.showAndWait();
+        }
+    }
+
+    public void workerMgmtClicked(MouseEvent mouseEvent) throws Exception{
+
+        if(list.getSelectionModel().getSelectedIndex()>=0){
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("WorkerManagementUI.fxml"));
+            Parent root = loader.load();
+            Stage primaryStage= new Stage();
+            primaryStage.setTitle("Worker Management");
+            primaryStage.setScene(new Scene(root, 1100, 680));
+            primaryStage.setMinHeight(680);
+            primaryStage.setMinWidth(1100);
+
+            ((WorkerManagement)loader.getController()).curr_stg=primaryStage;
+            ((WorkerManagement)loader.getController()).client=client;
+            client.getCurrentShowingStage().hide();
+            client.setCurrentShowingStage(primaryStage);
+
+            primaryStage.show();
+        }
+        else{
+            Alert a = new Alert(Alert.AlertType.ERROR ,null, ButtonType.OK);
+            a.setHeaderText("Please select an Organization to manage workers.");
             a.setTitle("Error");
             a.showAndWait();
         }

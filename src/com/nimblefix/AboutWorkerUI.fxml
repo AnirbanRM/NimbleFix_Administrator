@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="250.0" prefWidth="570.0" style="-fx-background-color: #ffffff;" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.nimblefix.AboutWorker">
+   <children>
+      <ImageView fx:id="dP" fitHeight="150.0" fitWidth="150.0" layoutX="35.0" layoutY="33.0" pickOnBounds="true" />
+      <Circle fill="#5c8ab500" layoutX="110.0" layoutY="109.0" radius="75.0" stroke="WHITE" strokeType="OUTSIDE" strokeWidth="35.0" />
+      <TextField fx:id="name_box" layoutX="319.0" layoutY="49.0" prefHeight="25.0" prefWidth="210.0" promptText="Name" />
+      <DatePicker fx:id="dob_box" layoutX="226.0" layoutY="163.0" prefHeight="25.0" prefWidth="150.0" promptText="DOB" />
+      <TextField fx:id="email_box" layoutX="226.0" layoutY="87.0" prefHeight="25.0" prefWidth="210.0" promptText="Email" />
+      <TextField fx:id="mobile_box" layoutX="443.0" layoutY="87.0" prefHeight="25.0" prefWidth="87.0" promptText="Mobile No." />
+      <DatePicker fx:id="doj_box" layoutX="380.0" layoutY="163.0" prefHeight="25.0" prefWidth="150.0" promptText="DOJ" />
+      <TextField fx:id="id_box" layoutX="226.0" layoutY="49.0" prefHeight="25.0" prefWidth="87.0" promptText="EmpID" />
+      <TextField fx:id="designation_box" layoutX="226.0" layoutY="125.0" prefHeight="25.0" prefWidth="302.0" promptText="Designation" />
+      <Button layoutX="48.0" layoutY="194.0" mnemonicParsing="false" prefHeight="14.0" prefWidth="56.0" style="-fx-background-color: #4488ff;" text="Add" textFill="WHITE">
+         <font>
+            <Font name="System Bold Italic" size="10.0" />
+         </font>
+      </Button>
+      <Button layoutX="117.0" layoutY="194.0" mnemonicParsing="false" prefHeight="14.0" prefWidth="56.0" style="-fx-background-color: #4488ff;" text="Remove" textFill="WHITE">
+         <font>
+            <Font name="System Bold Italic" size="10.0" />
+         </font>
+      </Button>
+      <Button layoutX="489.0" layoutY="217.0" mnemonicParsing="false" onMouseClicked="#save_clicked" prefHeight="25.0" prefWidth="69.0" text="Save" />
+      <Button layoutX="409.0" layoutY="217.0" mnemonicParsing="false" onMouseClicked="#cancel_clicked" prefHeight="25.0" prefWidth="69.0" text="Cancel" />
+   </children>
+</AnchorPane>

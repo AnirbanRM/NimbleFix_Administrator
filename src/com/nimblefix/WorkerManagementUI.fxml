@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="680.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.nimblefix.WorkerManagement">
+   <children>
+      <TableView fx:id="employeeTable" layoutX="24.0" layoutY="82.0" prefHeight="538.0" prefWidth="1050.0" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="82.0">
+        <columns>
+          <TableColumn fx:id="empID" editable="false" prefWidth="79.99998474121094" text="EmpID" />
+          <TableColumn fx:id="fName" editable="false" prefWidth="212.0" text="Full Name" />
+            <TableColumn fx:id="email" editable="false" prefWidth="212.0" text="Email ID" />
+            <TableColumn fx:id="mobile" editable="false" prefWidth="122.0" text="Mobile No." />
+            <TableColumn fx:id="designation" editable="false" prefWidth="212.0" text="Designation" />
+            <TableColumn fx:id="dob" editable="false" prefWidth="110.0" text="DOB" />
+            <TableColumn fx:id="doj" editable="false" prefWidth="101.0" text="DOJ" />
+        </columns>
+      </TableView>
+      <TitledPane animated="false" expanded="false" layoutX="649.0" layoutY="14.0" prefHeight="200.0" prefWidth="427.0" text="Filter" visible="false" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="14.0">
+        <content>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="114.0" prefWidth="425.0" />
+        </content>
+      </TitledPane>
+      <Button layoutX="947.0" layoutY="639.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="112.0" text="Save" />
+      <Button layoutX="828.0" layoutY="639.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="102.0" text="Cancel" />
+      <Label layoutX="25.0" layoutY="15.0" prefHeight="32.0" prefWidth="579.0" text="Organization Name" wrapText="true" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="496.0" AnchorPane.topAnchor="15.0">
+         <font>
+            <Font name="System Bold" size="22.0" />
+         </font>
+      </Label>
+      <Label layoutX="26.0" layoutY="55.0" text="Organizatiion ID" />
+      <Button layoutX="898.0" layoutY="51.0" mnemonicParsing="false" onMouseClicked="#add_clicked" prefHeight="25.0" prefWidth="77.0" text="Add" />
+      <Button layoutX="989.0" layoutY="51.0" mnemonicParsing="false" onMouseClicked="#remove_clicked" prefHeight="25.0" prefWidth="77.0" text="Remove" />
+   </children>
+</AnchorPane>
