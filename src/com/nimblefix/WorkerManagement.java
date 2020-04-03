@@ -2,17 +2,23 @@ package com.nimblefix;
 
 import com.nimblefix.core.Category;
 import com.nimblefix.core.Worker;
+import com.sun.corba.se.spi.orbutil.threadpool.Work;
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
+import java.lang.annotation.Target;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -21,14 +27,19 @@ public class WorkerManagement implements Initializable {
 
     public Stage curr_stg;
     public Client client;
-    ArrayList<Worker> workers;
+    static ArrayList<Worker> workers;
+    String organizationID,organizationName;
 
     @FXML TableView employeeTable;
     @FXML TableColumn empID,fName,email,mobile,designation,dob,doj;
+    @FXML Label orgID,orgName;
 
     public void add_clicked(MouseEvent mouseEvent) throws Exception{
-        Worker w = new Worker();
+         launchAboutWorker(null);
+         rePopulate();
+    }
 
+    private void launchAboutWorker(Worker w) throws Exception{
         FXMLLoader loader = new FXMLLoader(getClass().getResource("AboutWorkerUI.fxml"));
         Parent root = loader.load();
         Stage primaryStage= new Stage();
@@ -39,19 +50,13 @@ public class WorkerManagement implements Initializable {
         ArrayList<String> desigs = new ArrayList<String>();
         for(Worker worker : workers)
             if(!desigs.contains(worker.getDesignation()))
-                desigs.add(worker.getDesignation());
+                desigs.add(worker.getDesignation());;
 
-        Worker temporaryWorker = (Worker) w.clone();
-        ((AboutWorker)(loader.getController())).setWorker(temporaryWorker,desigs);
+        ((AboutWorker)(loader.getController())).setWorker(w,desigs);
         ((AboutWorker)loader.getController()).curr_stg=primaryStage;
 
         primaryStage.initOwner(curr_stg);
         primaryStage.showAndWait();
-
-        if(temporaryWorker!=null) {
-            workers.add(temporaryWorker);
-            rePopulate();
-        }
     }
 
     private void rePopulate() {
@@ -71,6 +76,31 @@ public class WorkerManagement implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         workers = new ArrayList<Worker>();
+
+        Platform.runLater(()->{
+            orgID.setText(organizationID);
+            orgName.setText(organizationName);
+        });
+
+        employeeTable.setRowFactory(new Callback<TableView, TableRow>() {
+            @Override
+            public TableRow call(TableView param) {
+                TableRow tr = new TableRow();
+                tr.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        if(event.getClickCount()==2 && !event.getTarget().toString().contains("null") ){
+                            if(employeeTable.getSelectionModel().getSelectedItem()==null)return;
+                            try {
+                                launchAboutWorker(((Worker) employeeTable.getSelectionModel().getSelectedItem()));
+                                rePopulate();
+                            } catch (Exception e) { }
+                        }
+                    }
+                });
+                return tr;
+            }
+        });
 
         empID.setCellValueFactory(new PropertyValueFactory<Worker,String>("empID"));
         fName.setCellValueFactory(new PropertyValueFactory<Worker,String>("name"));

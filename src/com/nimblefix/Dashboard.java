@@ -373,6 +373,9 @@ public class Dashboard implements Initializable {
 
             ((WorkerManagement)loader.getController()).curr_stg=primaryStage;
             ((WorkerManagement)loader.getController()).client=client;
+            ((WorkerManagement)loader.getController()).organizationName = ((ListItem) list.getSelectionModel().getSelectedItem()).organizationName;
+            ((WorkerManagement)loader.getController()).organizationID = ((ListItem) list.getSelectionModel().getSelectedItem()).organizationID;
+
             client.getCurrentShowingStage().hide();
             client.setCurrentShowingStage(primaryStage);
 

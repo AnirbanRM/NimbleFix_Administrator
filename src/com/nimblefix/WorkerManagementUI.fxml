@@ -24,12 +24,12 @@
       </TitledPane>
       <Button layoutX="947.0" layoutY="639.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="112.0" text="Save" />
       <Button layoutX="828.0" layoutY="639.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="102.0" text="Cancel" />
-      <Label layoutX="25.0" layoutY="15.0" prefHeight="32.0" prefWidth="579.0" text="Organization Name" wrapText="true" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="496.0" AnchorPane.topAnchor="15.0">
+      <Label fx:id="orgName" layoutX="25.0" layoutY="15.0" prefHeight="32.0" prefWidth="579.0" text="Organization Name" wrapText="true" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="496.0" AnchorPane.topAnchor="15.0">
          <font>
             <Font name="System Bold" size="22.0" />
          </font>
       </Label>
-      <Label layoutX="26.0" layoutY="55.0" text="Organizatiion ID" />
+      <Label fx:id="orgID" layoutX="26.0" layoutY="49.0" text="Organization ID" />
       <Button layoutX="898.0" layoutY="51.0" mnemonicParsing="false" onMouseClicked="#add_clicked" prefHeight="25.0" prefWidth="77.0" text="Add" />
       <Button layoutX="989.0" layoutY="51.0" mnemonicParsing="false" onMouseClicked="#remove_clicked" prefHeight="25.0" prefWidth="77.0" text="Remove" />
    </children>

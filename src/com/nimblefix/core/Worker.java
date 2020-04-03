@@ -71,4 +71,12 @@ public class Worker implements Serializable,Cloneable {
     public Object clone() throws CloneNotSupportedException {
         return super.clone();
     }
+
+    public void setDP(byte[] bytes) {
+        this.dP = bytes;
+    }
+
+    public byte[] getDP() {
+        return dP;
+    }
 }

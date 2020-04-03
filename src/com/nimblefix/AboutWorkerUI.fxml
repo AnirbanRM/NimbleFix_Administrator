@@ -17,7 +17,7 @@
       <DatePicker fx:id="doj_box" layoutX="380.0" layoutY="163.0" prefHeight="25.0" prefWidth="150.0" promptText="DOJ" />
       <TextField fx:id="id_box" layoutX="226.0" layoutY="49.0" prefHeight="25.0" prefWidth="87.0" promptText="EmpID" />
       <TextField fx:id="designation_box" layoutX="226.0" layoutY="125.0" prefHeight="25.0" prefWidth="302.0" promptText="Designation" />
-      <Button layoutX="48.0" layoutY="194.0" mnemonicParsing="false" prefHeight="14.0" prefWidth="56.0" style="-fx-background-color: #4488ff;" text="Add" textFill="WHITE">
+      <Button layoutX="48.0" layoutY="194.0" mnemonicParsing="false" onMouseClicked="#add_clicked" prefHeight="14.0" prefWidth="56.0" style="-fx-background-color: #4488ff;" text="Add" textFill="WHITE">
          <font>
             <Font name="System Bold Italic" size="10.0" />
          </font>
