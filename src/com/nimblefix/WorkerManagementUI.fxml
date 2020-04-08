@@ -17,13 +17,8 @@
             <TableColumn fx:id="doj" editable="false" prefWidth="101.0" text="DOJ" />
         </columns>
       </TableView>
-      <TitledPane animated="false" expanded="false" layoutX="649.0" layoutY="14.0" prefHeight="200.0" prefWidth="427.0" text="Filter" visible="false" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="14.0">
-        <content>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="114.0" prefWidth="425.0" />
-        </content>
-      </TitledPane>
-      <Button layoutX="947.0" layoutY="639.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="112.0" text="Save" />
-      <Button layoutX="828.0" layoutY="639.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="102.0" text="Cancel" />
+      <Button layoutX="947.0" layoutY="639.0" mnemonicParsing="false" onMouseClicked="#saveClicked" prefHeight="25.0" prefWidth="112.0" text="Save" />
+      <Button layoutX="828.0" layoutY="639.0" mnemonicParsing="false" onMouseClicked="#close_clicked" prefHeight="25.0" prefWidth="102.0" text="Close" />
       <Label fx:id="orgName" layoutX="25.0" layoutY="15.0" prefHeight="32.0" prefWidth="579.0" text="Organization Name" wrapText="true" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="496.0" AnchorPane.topAnchor="15.0">
          <font>
             <Font name="System Bold" size="22.0" />
@@ -32,5 +27,82 @@
       <Label fx:id="orgID" layoutX="26.0" layoutY="49.0" text="Organization ID" />
       <Button layoutX="898.0" layoutY="51.0" mnemonicParsing="false" onMouseClicked="#add_clicked" prefHeight="25.0" prefWidth="77.0" text="Add" />
       <Button layoutX="989.0" layoutY="51.0" mnemonicParsing="false" onMouseClicked="#remove_clicked" prefHeight="25.0" prefWidth="77.0" text="Remove" />
+      <TitledPane fx:id="filter_box" animated="false" expanded="false" layoutX="649.0" layoutY="14.0" prefHeight="0.0" prefWidth="427.0" text="Filter" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="14.0">
+        <content>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="341.0" prefWidth="425.0" style="-fx-background-color: #ffffff;">
+               <children>
+                  <Label layoutX="14.0" layoutY="27.0" text="EmpID">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="emp_ids" layoutX="158.0" layoutY="23.0" prefHeight="25.0" prefWidth="243.0" />
+                  <TextField fx:id="emp_idm1" layoutX="158.0" layoutY="53.0" prefHeight="25.0" prefWidth="112.0" />
+                  <RadioButton layoutX="67.0" layoutY="27.0" mnemonicParsing="false" selected="true" text="contains">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="G1" />
+                     </toggleGroup></RadioButton>
+                  <RadioButton layoutX="68.0" layoutY="57.0" mnemonicParsing="false" text="between" toggleGroup="$G1" />
+                  <Label layoutX="275.0" layoutY="57.0" text="and" />
+                  <TextField fx:id="emp_idm2" layoutX="299.0" layoutY="53.0" prefHeight="25.0" prefWidth="102.0" />
+                   <Label layoutX="14.0" layoutY="106.0" text="Name">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font></Label>
+                  <Label layoutX="81.0" layoutY="106.0" text="contains" />
+                  <TextField fx:id="namebox" layoutX="131.0" layoutY="102.0" prefHeight="25.0" prefWidth="270.0" />
+                  <Label layoutX="14.0" layoutY="155.0" text="Email">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="79.0" layoutY="155.0" text="contains" />
+                  <TextField fx:id="emailbox" layoutX="131.0" layoutY="151.0" prefHeight="25.0" prefWidth="269.0" />
+                  <Label layoutX="14.0" layoutY="204.0" text="Mob No.">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="79.0" layoutY="204.0" text="contains" />
+                  <TextField fx:id="mob_nobox" layoutX="131.0" layoutY="200.0" prefHeight="25.0" prefWidth="269.0" />
+                  <Label layoutX="13.0" layoutY="251.0" text="Designation">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="116.0" layoutY="251.0" text="is" />
+                  <ChoiceBox fx:id="designationbox" layoutX="131.0" layoutY="247.0" prefHeight="25.0" prefWidth="268.0" />
+                  <Label layoutX="13.0" layoutY="298.0" text="Date of Birth ">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <RadioButton layoutX="111.0" layoutY="298.0" mnemonicParsing="false" selected="true" text="is">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="G2" />
+                     </toggleGroup></RadioButton>
+                  <DatePicker fx:id="dobs" layoutX="148.0" layoutY="294.0" />
+                  <RadioButton layoutX="66.0" layoutY="329.0" mnemonicParsing="false" text="between" toggleGroup="$G2" />
+                  <DatePicker fx:id="dobm1" layoutX="139.0" layoutY="325.0" prefHeight="25.0" prefWidth="112.0" />
+                  <Label layoutX="258.0" layoutY="329.0" text="and" />
+                  <DatePicker fx:id="dobm2" layoutX="285.0" layoutY="325.0" prefHeight="25.0" prefWidth="112.0" />
+                  <Label layoutX="9.0" layoutY="372.0" text="Date of Joining">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <RadioButton layoutX="113.0" layoutY="372.0" mnemonicParsing="false" selected="true" text="is">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="G3" />
+                     </toggleGroup></RadioButton>
+                  <DatePicker fx:id="dojs" layoutX="148.0" layoutY="368.0" />
+                  <RadioButton layoutX="66.0" layoutY="403.0" mnemonicParsing="false" text="between" toggleGroup="$G3" />
+                  <DatePicker fx:id="dojm1" layoutX="139.0" layoutY="399.0" prefHeight="25.0" prefWidth="112.0" />
+                  <Label layoutX="258.0" layoutY="403.0" text="and" />
+                  <DatePicker fx:id="dojm2" layoutX="285.0" layoutY="399.0" prefHeight="25.0" prefWidth="112.0" />
+                  <Button fx:id="filter" layoutX="254.0" layoutY="445.0" mnemonicParsing="false" onMouseClicked="#filter_clicked" prefHeight="25.0" prefWidth="159.0" text="Filter" />
+               </children></AnchorPane>
+        </content>
+      </TitledPane>
    </children>
 </AnchorPane>

@@ -1,7 +1,9 @@
 package com.nimblefix;
 
 import com.nimblefix.ControlMessages.ComplaintMessage;
+import com.nimblefix.ControlMessages.WorkerExchangeMessage;
 import com.nimblefix.core.*;
+import com.sun.corba.se.spi.orbutil.threadpool.Work;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -108,6 +110,8 @@ public class Spectator implements Initializable {
     @FXML Label oui_box, organization_name_box,floor_id_box;
     @FXML AnchorPane canvas_field;
     Pane info_pane;
+
+    AboutComplaint aboutComplaintWindow;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -356,7 +360,8 @@ public class Spectator implements Initializable {
                                     FXMLLoader loader = new FXMLLoader(getClass().getResource("AboutComplaintUI.fxml"));
                                     Parent root = null;
                                     root = loader.load();
-                                    ((AboutComplaint)loader.getController()).setParam(getItem().getComplaint(),getItem().getInventoryItem(),current_organization.getCategories());
+                                    ((AboutComplaint)loader.getController()).setParam(client, getItem().getComplaint(),getItem().getInventoryItem(),current_organization.getCategories());
+                                    aboutComplaintWindow = loader.getController();
                                     Stage primaryStage= new Stage();
                                     primaryStage.setTitle("Complaint " + item.complaint.getInventoryID());
                                     primaryStage.setScene(new Scene(root, 940, 590));
@@ -368,7 +373,6 @@ public class Spectator implements Initializable {
                             }
                         }
                     });
-
                 } else {
                     setGraphic(null);
                     setBackground(new Background(new BackgroundFill(Color.valueOf("#efefef"), CornerRadii.EMPTY, Insets.EMPTY)));
@@ -412,13 +416,20 @@ public class Spectator implements Initializable {
                     if (o != null) {
                         final Object temp = o;
                         if (o instanceof ComplaintMessage) {
-                            Thread complaint_thd = new Thread(new Runnable() {
+                            new Thread(new Runnable() {
                                 @Override
                                 public void run() {
                                     handle_complaint((ComplaintMessage) temp);
                                 }
-                            });
-                            complaint_thd.start();
+                            }).start();
+                        }
+                        else if(o instanceof WorkerExchangeMessage){
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    handle_workers((WorkerExchangeMessage) temp);
+                                }
+                            }).start();
                         }
                     } else
                         break;
@@ -428,13 +439,22 @@ public class Spectator implements Initializable {
         receiverthd.start();
     }
 
+    private void handle_workers(WorkerExchangeMessage workerExchangeMessage) {
+        ArrayList<Worker> employees = new ArrayList<Worker>();
+        if(workerExchangeMessage.getBody().equals("FETCHRESULT")){
+            for(Worker w : workerExchangeMessage.getWorkers())
+                employees.add(w);
+            if(aboutComplaintWindow!=null)
+                aboutComplaintWindow.setEmployees(employees);
+        }
+    }
+
     private void handle_complaint (ComplaintMessage complaint){
         if(complaint.getBody()!=null && complaint.getBody().substring(0,3).equals("GET")){
 
             for(Complaint msg : complaint.getComplaints()){
                 Platform.runLater(() -> {handle_complaint(new ComplaintMessage(msg)); });
             }
-
         }
         else {
 

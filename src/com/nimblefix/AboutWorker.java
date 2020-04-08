@@ -112,4 +112,8 @@ public class AboutWorker implements Initializable {
 
         dP.setImage(i);
     }
+
+    public void remove_clicked(MouseEvent mouseEvent){
+        dP.setImage(null);
+    }
 }

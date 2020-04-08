@@ -11,6 +11,16 @@ public class Worker implements Serializable,Cloneable {
         empID=name=email=mobile=designation=doB=doJ="";
     }
 
+    public Worker(Worker worker){
+        setEmpID(worker.getEmpID());
+        setName(worker.getName());
+        setEmail(worker.getEmail());
+        setMobile(worker.getMobile());
+        setDesignation(worker.getDesignation());
+        setDoB(worker.getDoB());
+        setDoJ(worker.getDoJ());
+    }
+
     public String getEmpID() {
         return empID;
     }

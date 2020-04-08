@@ -201,7 +201,6 @@ public class Dashboard implements Initializable {
     }
 
     private void prepareListView() {
-
         list.setCellFactory(param -> new ListCell<ListItem>() {
             @Override
             protected void updateItem(ListItem item, boolean empty) {

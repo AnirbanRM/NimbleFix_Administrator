@@ -22,7 +22,7 @@
             <Font name="System Bold Italic" size="10.0" />
          </font>
       </Button>
-      <Button layoutX="117.0" layoutY="194.0" mnemonicParsing="false" prefHeight="14.0" prefWidth="56.0" style="-fx-background-color: #4488ff;" text="Remove" textFill="WHITE">
+      <Button layoutX="117.0" layoutY="194.0" mnemonicParsing="false" onMouseClicked="#remove_clicked" prefHeight="14.0" prefWidth="56.0" style="-fx-background-color: #4488ff;" text="Remove" textFill="WHITE">
          <font>
             <Font name="System Bold Italic" size="10.0" />
          </font>

@@ -75,7 +75,7 @@ public class Client {
         Object receivedObject=null;
         try {
             receivedObject = READER.readUnshared();
-        } catch (Exception e) { }
+        } catch (Exception e) { e.printStackTrace(); }
         return receivedObject;
     }
 
