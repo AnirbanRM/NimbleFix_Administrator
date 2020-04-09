@@ -171,8 +171,6 @@ public class Dashboard implements Initializable {
 
     }
 
-
-
     public void fetchOrganizations() {
         Thread organizationFetcher = new Thread(new Runnable() {
             @Override

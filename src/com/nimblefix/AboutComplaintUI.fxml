@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="590.0" prefWidth="940.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.nimblefix.AboutComplaint">
+<AnchorPane prefHeight="700.0" prefWidth="940.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.nimblefix.AboutComplaint">
    <children>
       <TitledPane alignment="CENTER" animated="false" collapsible="false" layoutX="28.0" layoutY="27.0" prefHeight="164.0" prefWidth="885.0" text="Complaint Details">
         <content>
@@ -26,34 +26,30 @@
         </content>
       </TitledPane>
       <Label layoutX="28.0" layoutY="211.0" text="Worker Assignment" />
-      <TableView fx:id="emp_Table" focusTraversable="false" layoutX="28.0" layoutY="242.0" prefHeight="199.0" prefWidth="885.0">
+      <TableView fx:id="emp_Table" focusTraversable="false" layoutX="28.0" layoutY="242.0" prefHeight="321.0" prefWidth="885.0">
         <columns>
-          <TableColumn fx:id="empID" prefWidth="85.0" text="Employee ID" />
-          <TableColumn fx:id="fName" minWidth="0.0" prefWidth="225.0" text="Full Name" />
+            <TableColumn fx:id="empID" prefWidth="85.0" text="Employee ID" />
+            <TableColumn fx:id="fName" minWidth="0.0" prefWidth="225.0" text="Full Name" />
             <TableColumn fx:id="email" minWidth="0.0" prefWidth="261.0" text="Email" />
             <TableColumn fx:id="pTask" minWidth="0.0" prefWidth="88.0" text="Pending Tasks" />
             <TableColumn fx:id="designation" minWidth="0.0" prefWidth="225.0" text="Designation" />
         </columns>
-         <columnResizePolicy>
-            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-         </columnResizePolicy>
       </TableView>
-      <TextArea layoutX="28.0" layoutY="482.0" prefHeight="82.0" prefWidth="497.0" promptText="Remrks..." wrapText="true" />
-      <Label layoutX="28.0" layoutY="462.0" text="Remarks / Special Instructions" />
-      <TextField layoutX="333.0" layoutY="207.0" prefHeight="25.0" prefWidth="258.0" promptText="Search workers">
+      <TextArea fx:id="admin_remarks" layoutX="28.0" layoutY="596.0" prefHeight="82.0" prefWidth="497.0" promptText="Remrks..." wrapText="true" />
+      <Label layoutX="28.0" layoutY="576.0" text="Remarks / Special Instructions" />
+      <TextField fx:id="search_box" layoutX="279.0" layoutY="207.0" prefHeight="25.0" prefWidth="394.0" promptText="Search workers">
          <opaqueInsets>
             <Insets />
          </opaqueInsets>
          <padding>
-            <Insets left="40.0" />
+            <Insets left="35.0" />
          </padding>
       </TextField>
-      <Label alignment="CENTER" layoutX="334.0" layoutY="208.0" prefHeight="23.0" prefWidth="28.0" style="-fx-background-color: #dedede;" text="🔍" />
-      <Button layoutX="763.0" layoutY="514.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="147.0" text="Assign &gt;">
+      <Label alignment="CENTER" layoutX="280.0" layoutY="208.0" prefHeight="23.0" prefWidth="28.0" style="-fx-background-color: #dedede;" text="🔍" />
+      <Button layoutX="763.0" layoutY="628.0" mnemonicParsing="false" onMouseClicked="#assign_clicked" prefHeight="44.0" prefWidth="147.0" text="Assign &gt;">
          <font>
             <Font name="System Bold" size="20.0" />
          </font>
       </Button>
-      <TitledPane expanded="false" layoutX="616.0" layoutY="206.0" prefHeight="288.0" prefWidth="297.0" text="Filter" />
    </children>
 </AnchorPane>

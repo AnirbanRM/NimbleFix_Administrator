@@ -46,6 +46,7 @@ public class AboutWorker implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         Platform.runLater(()-> {
+            TextFields.bindAutoCompletion(designation_box,desigs);
             if(currentWorker==null)return;
             id_box.setText(currentWorker.getEmpID());
             name_box.setText(currentWorker.getName());
@@ -56,8 +57,6 @@ public class AboutWorker implements Initializable {
                 dob_box.setValue(LocalDate.parse(currentWorker.getDoB()));
                 doj_box.setValue(LocalDate.parse(currentWorker.getDoJ()));
             }catch (DateTimeParseException e){ }
-
-            TextFields.bindAutoCompletion(designation_box,desigs);
 
             if(currentWorker.getDP()!=null){
                 ByteArrayInputStream bis = new ByteArrayInputStream(currentWorker.getDP());

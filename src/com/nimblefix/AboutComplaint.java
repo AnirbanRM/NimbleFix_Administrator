@@ -1,58 +1,81 @@
 package com.nimblefix;
 
+import com.nimblefix.ControlMessages.ComplaintMessage;
 import com.nimblefix.ControlMessages.WorkerExchangeMessage;
 import com.nimblefix.core.Category;
 import com.nimblefix.core.Complaint;
 import com.nimblefix.core.InventoryItem;
 import com.nimblefix.core.Worker;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
 
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.ResourceBundle;
-import java.util.TimeZone;
+import java.util.*;
 
 public class AboutComplaint implements Initializable {
 
-    private class ListItem extends Worker{
-        private int pendingJobs;
-        ListItem(Worker worker, int pendingJobs){
+    public class EmpItem extends Worker{
+        private String pJobs;
+        EmpItem(Worker worker,int pendingJobs){
             super(worker);
-            this.pendingJobs = pendingJobs;
+            this.pJobs = String.valueOf(pendingJobs);
         }
 
-        public int getPendingJobs() {
-            return pendingJobs;
+        public String getPJobs() {
+            return pJobs;
         }
 
-        public void setPendingJobs(int pendingJobs) {
-            this.pendingJobs = pendingJobs;
+        public void setPJobs(int pendingJobs) {
+            this.pJobs = String.valueOf(pendingJobs);
+        }
+
+        @Override
+        public String toString(){
+            return super.getEmpID()+super.getEmail()+super.getName()+super.getDesignation()+getPJobs();
         }
     }
 
     @FXML Label cID,cTS,iTitle,iCat,iID;
-    @FXML TextArea cUR;
+    @FXML TextArea cUR,admin_remarks;
     @FXML TableView emp_Table;
-    @FXML TableColumn empID,fName,email,pTask,designation;
+    @FXML TableColumn empID,fName,email,designation,pTask;
+    @FXML TextField search_box;
 
     Complaint complaint;
     InventoryItem inventory;
     ArrayList<Category> categories;
     ArrayList<Worker> employees = new ArrayList<Worker>();
     Client client;
+    Stage curr_stage=null;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        empID.setCellValueFactory(new PropertyValueFactory<ListItem,String>("empID"));
-        fName.setCellValueFactory(new PropertyValueFactory<ListItem,String>("name"));
-        email.setCellValueFactory(new PropertyValueFactory<ListItem,String>("email"));
-        designation.setCellValueFactory(new PropertyValueFactory<ListItem,String>("designation"));
-        pTask.setCellValueFactory(new PropertyValueFactory<ListItem,String>("pendingJobs"));
+        empID.setCellValueFactory(new PropertyValueFactory<Worker,String>("empID"));
+        fName.setCellValueFactory(new PropertyValueFactory<Worker,String>("name"));
+        email.setCellValueFactory(new PropertyValueFactory<Worker,String>("email"));
+        pTask.setCellValueFactory(new PropertyValueFactory<Worker,String>("pJobs"));
+        designation.setCellValueFactory(new PropertyValueFactory<Worker,String>("designation"));
+
+        search_box.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                emp_Table.getItems().clear();
+                Iterator<Worker> iterator = employees.iterator();
+                while(iterator.hasNext()){
+                    Worker w = iterator.next();
+                    if(w.toString().toLowerCase().contains(newValue.toLowerCase()))
+                        emp_Table.getItems().add(w);
+                }
+            }
+        });
     }
 
     public void setParam(Client client, Complaint complaint, InventoryItem inventoryItem, ArrayList<Category> categories){
@@ -85,7 +108,8 @@ public class AboutComplaint implements Initializable {
     }
 
     public void setEmployees(ArrayList<Worker> employees) {
-        this.employees = employees;
+        for(Worker w : employees)
+            this.employees.add(new EmpItem(w,0));
         populate();
     }
 
@@ -104,5 +128,43 @@ public class AboutComplaint implements Initializable {
             client.WRITER.reset();
             client.WRITER.writeUnshared(wem);
         }catch (Exception e){ }
+    }
+
+    public void assign_clicked(MouseEvent mouseEvent) {
+        if(emp_Table.getSelectionModel().getSelectedItem()==null)return;
+        complaint.setAdminComments(admin_remarks.getText().trim().length()==0?"No remarks":admin_remarks.getText().trim());
+        complaint.setAssignedBy(client.clientID);
+        complaint.setAssignedDate(Complaint.getDTString(new Date()));
+        complaint.setAssignedTo(((Worker) emp_Table.getSelectionModel().getSelectedItem()).getEmail());
+
+        ComplaintMessage complaintMessage = new ComplaintMessage(complaint);
+        complaintMessage.setBody("ASSIGNMENT");
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    client.WRITER.reset();
+                    client.WRITER.writeUnshared(complaintMessage);
+                }catch (Exception e){ }
+            }
+        }).start();
+    }
+
+    public void onAssignmentreply(ComplaintMessage reply){
+        Platform.runLater(()->{
+            if(reply.getBody().equals("ASSIGNMENT_SUCCESS")){
+                Alert a = new Alert(Alert.AlertType.INFORMATION ,null, ButtonType.OK);
+                a.setHeaderText("Worker successfully assigned.");
+                a.setTitle("Success");
+                a.showAndWait();
+                curr_stage.close();
+            }else{
+                Alert a = new Alert(Alert.AlertType.ERROR ,null, ButtonType.OK);
+                a.setHeaderText("Cannot assign worker. Please retry.");
+                a.setTitle("Error");
+                a.showAndWait();
+            }
+        });
     }
 }

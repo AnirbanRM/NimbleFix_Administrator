@@ -3,7 +3,6 @@ package com.nimblefix;
 import com.nimblefix.ControlMessages.ComplaintMessage;
 import com.nimblefix.ControlMessages.WorkerExchangeMessage;
 import com.nimblefix.core.*;
-import com.sun.corba.se.spi.orbutil.threadpool.Work;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -363,8 +362,9 @@ public class Spectator implements Initializable {
                                     ((AboutComplaint)loader.getController()).setParam(client, getItem().getComplaint(),getItem().getInventoryItem(),current_organization.getCategories());
                                     aboutComplaintWindow = loader.getController();
                                     Stage primaryStage= new Stage();
+                                    aboutComplaintWindow.curr_stage = primaryStage;
                                     primaryStage.setTitle("Complaint " + item.complaint.getInventoryID());
-                                    primaryStage.setScene(new Scene(root, 940, 590));
+                                    primaryStage.setScene(new Scene(root, 940, 700));
                                     primaryStage.setResizable(false);
                                     primaryStage.show();
 
@@ -450,14 +450,16 @@ public class Spectator implements Initializable {
     }
 
     private void handle_complaint (ComplaintMessage complaint){
-        if(complaint.getBody()!=null && complaint.getBody().substring(0,3).equals("GET")){
+        if(complaint.getBody()!=null && complaint.getBody().contains("ASSIGNMENT")) {
+            aboutComplaintWindow.onAssignmentreply(complaint);
+        }
+        else if(complaint.getBody()!=null && complaint.getBody().substring(0,3).equals("GET")){
 
             for(Complaint msg : complaint.getComplaints()){
                 Platform.runLater(() -> {handle_complaint(new ComplaintMessage(msg)); });
             }
         }
         else {
-
             String floorid = null;
             InventoryItem item = null;
             for (OrganizationalFloors of : current_organization.getFloors()) {
