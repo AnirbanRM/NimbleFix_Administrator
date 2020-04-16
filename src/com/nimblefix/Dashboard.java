@@ -2,7 +2,9 @@ package com.nimblefix;
 
 import com.nimblefix.ControlMessages.MonitorMessage;
 import com.nimblefix.ControlMessages.OrganizationsExchangerMessage;
+import com.nimblefix.core.InventoryItem;
 import com.nimblefix.core.Organization;
+import com.nimblefix.core.OrganizationalFloors;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -26,12 +28,13 @@ import javafx.stage.Stage;
 
 import java.io.*;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class Dashboard implements Initializable {
     @FXML Label icon1,icon2,connected_label,user_label,new_file_button,load_file_button;
     @FXML ImageView logo_box,logo3,logo4;
-    @FXML Pane fabricate_button,spectate_button,workerMgmt;
+    @FXML Pane fabricate_button,spectate_button,workerMgmt,inventoryHistory,inventoryMaintainence;
     @FXML ListView list;
 
     public Stage curr_stg;
@@ -88,17 +91,11 @@ public class Dashboard implements Initializable {
         logo3.setImage(new Image("file://" + getClass().getResource("/resources/server.png").getPath(), 20, 20, true, true));
         logo4.setImage(new Image("file://" + getClass().getResource("/resources/user.png").getPath(), 20, 20, true, true));
 
-        fabricate_button.setOnMouseEntered(event -> fabricate_button.setBackground(new Background(new BackgroundFill(Color.valueOf("#4D089A"), CornerRadii.EMPTY, Insets.EMPTY))));
-
-        workerMgmt.setOnMouseEntered(event -> workerMgmt.setBackground(new Background(new BackgroundFill(Color.valueOf("#4D089A"), CornerRadii.EMPTY, Insets.EMPTY))));
-
-        spectate_button.setOnMouseEntered(event -> spectate_button.setBackground(new Background(new BackgroundFill(Color.valueOf("#4D089A"), CornerRadii.EMPTY, Insets.EMPTY))));
-
-        fabricate_button.setOnMouseExited(event -> fabricate_button.setBackground(new Background(new BackgroundFill(Color.valueOf("#320670"), CornerRadii.EMPTY, Insets.EMPTY))));
-
-        workerMgmt.setOnMouseExited(event -> workerMgmt.setBackground(new Background(new BackgroundFill(Color.valueOf("#320670"), CornerRadii.EMPTY, Insets.EMPTY))));
-
-        spectate_button.setOnMouseExited(event -> spectate_button.setBackground(new Background(new BackgroundFill(Color.valueOf("#320670"), CornerRadii.EMPTY, Insets.EMPTY))));
+        Pane[] graphicButtons = new Pane[]{fabricate_button,workerMgmt,spectate_button,inventoryHistory,inventoryMaintainence};
+        for(Pane p : graphicButtons){
+            p.setOnMouseEntered(event -> p.setBackground(new Background(new BackgroundFill(Color.valueOf("#4D089A"), CornerRadii.EMPTY, Insets.EMPTY))));
+            p.setOnMouseExited(event -> p.setBackground(new Background(new BackgroundFill(Color.valueOf("#320670"), CornerRadii.EMPTY, Insets.EMPTY))));
+        }
 
         new_file_button.setOnMouseEntered(event -> {
             new_file_button.setTextFill(Color.valueOf("#0C7B93"));
@@ -446,6 +443,47 @@ public class Dashboard implements Initializable {
             client.setCurrentShowingStage(primaryStage);
 
             primaryStage.show();
+        }
+    }
+
+    public void invMaintainClicked(MouseEvent mouseEvent) throws Exception{
+        if(list.getSelectionModel().getSelectedIndex()>=0){
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("InventoryMaintainenceUI.fxml"));
+            Parent root = loader.load();
+            Stage primaryStage = new Stage();
+            primaryStage.setTitle("Organization Spectator");
+            primaryStage.setScene(new Scene(root, 860, 520));
+            primaryStage.setResizable(false);
+
+            ((InventoryMaintainence) loader.getController()).curr_stg = primaryStage;
+            ((InventoryMaintainence) loader.getController()).client = client;
+            ((InventoryMaintainence) loader.getController()).setExtra( ((ListItem) list.getSelectionModel().getSelectedItem()).getOrganizationID(), ((ListItem) list.getSelectionModel().getSelectedItem()).getOrganizationName());
+
+            primaryStage.show();
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        OrganizationsExchangerMessage organizationsExchangerMessage = new OrganizationsExchangerMessage(client.clientID, OrganizationsExchangerMessage.messageType.CLIENT_GET);
+                        organizationsExchangerMessage.setBody(((ListItem) list.getSelectionModel().getSelectedItem()).getOrganizationID());
+
+                        client.WRITER.writeUnshared(organizationsExchangerMessage);
+                        Object organizationResponse = client.readNext();
+
+                        if (organizationResponse instanceof OrganizationsExchangerMessage) {
+                            Platform.runLater(()->{ ((InventoryMaintainence) loader.getController()).setInventoryItems(((OrganizationsExchangerMessage)organizationResponse).getOrganizations().get(0).getCategories(), ((OrganizationsExchangerMessage)organizationResponse).getOrganizations().get(0).getFloors()); });
+                        }
+                    }catch (Exception e){ }
+                }
+            }).start();
+        }
+        else{
+            Alert a = new Alert(Alert.AlertType.ERROR ,null, ButtonType.OK);
+            a.setHeaderText("Please select an Organization to spectate.");
+            a.setTitle("Error");
+            a.showAndWait();
         }
     }
 }

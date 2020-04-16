@@ -43,7 +43,7 @@ public class AboutComplaint implements Initializable {
         }
     }
 
-    @FXML Label cID,cTS,iTitle,iCat,iID;
+    @FXML Label cID,cTS,iTitle,iCat,iID,aTo,aTS;
     @FXML TextArea cUR,admin_remarks;
     @FXML TableView emp_Table;
     @FXML TableColumn empID,fName,email,designation,pTask;
@@ -97,6 +97,8 @@ public class AboutComplaint implements Initializable {
             iTitle.setText(inventory.getTitle());
             iID.setText(inventory.getId());
             cUR.setText(complaint.getUserRemarks());
+            aTo.setText(complaint.getAssignedTo()==null?"None":complaint.getAssignedTo());
+            aTS.setText(complaint.getAssignedDateTime()==null?"None":complaint.getAssignedDateTime());
 
             for(Category c : categories)
                 if(c.getUniqueID().equals(inventory.getCategoryTag())) {
@@ -132,6 +134,14 @@ public class AboutComplaint implements Initializable {
 
     public void assign_clicked(MouseEvent mouseEvent) {
         if(emp_Table.getSelectionModel().getSelectedItem()==null)return;
+        if(complaint.getAssignedTo()!=null){
+            Alert a = new Alert(Alert.AlertType.WARNING ,null, ButtonType.YES,ButtonType.NO);
+            a.setHeaderText("Complaint is already assigned. Do you want to reassign ?");
+            a.setTitle("Warning");
+            a.showAndWait();
+            if(a.getResult()==ButtonType.YES);
+            else return;
+        }
         complaint.setAdminComments(admin_remarks.getText().trim().length()==0?"No remarks":admin_remarks.getText().trim());
         complaint.setAssignedBy(client.clientID);
         complaint.setAssignedDate(Complaint.getDTString(new Date()));

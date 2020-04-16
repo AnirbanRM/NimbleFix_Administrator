@@ -5,39 +5,43 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="700.0" prefWidth="940.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.nimblefix.AboutComplaint">
+<AnchorPane prefHeight="700.0" prefWidth="1140.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.nimblefix.AboutComplaint">
    <children>
-      <TitledPane alignment="CENTER" animated="false" collapsible="false" layoutX="28.0" layoutY="27.0" prefHeight="164.0" prefWidth="885.0" text="Complaint Details">
+      <TitledPane alignment="CENTER" animated="false" collapsible="false" layoutX="26.0" layoutY="27.0" prefHeight="164.0" prefWidth="1089.0" text="Complaint Details">
         <content>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="138.0" prefWidth="866.0">
                <children>
                   <Label layoutX="21.0" layoutY="16.0" text="Complaint ID:" />
                   <Label fx:id="cID" layoutX="155.0" layoutY="16.0" text="XXXXXXXXXXXXXXX" />
-                  <TextArea fx:id="cUR" editable="false" focusTraversable="false" layoutX="404.0" layoutY="37.0" prefHeight="84.0" prefWidth="462.0" text="User Remarks" wrapText="true" />
+                  <TextArea fx:id="cUR" editable="false" focusTraversable="false" layoutX="773.0" layoutY="38.0" prefHeight="84.0" prefWidth="294.0" text="User Remarks" wrapText="true" />
                   <Label layoutX="21.0" layoutY="37.0" text="Complaint Timestamp:" />
                   <Label fx:id="cTS" layoutX="155.0" layoutY="37.0" text="XXXXXXXXXXXXXXX" />
                   <Label layoutX="21.0" layoutY="70.0" text="About Inventory:" />
-                  <Label fx:id="iTitle" layoutX="155.0" layoutY="70.0" text="Title" />
-                  <Label fx:id="iCat" layoutX="155.0" layoutY="88.0" text="Category" />
-                  <Label fx:id="iID" layoutX="155.0" layoutY="107.0" text="Inventory ID" />
-                  <Label layoutX="405.0" layoutY="16.0" text="User Remarks" />
+                  <Label fx:id="iTitle" layoutX="155.0" layoutY="70.0" prefHeight="17.0" prefWidth="344.0" text="Title" />
+                  <Label fx:id="iCat" layoutX="155.0" layoutY="88.0" prefHeight="17.0" prefWidth="176.0" text="Category" />
+                  <Label fx:id="iID" layoutX="155.0" layoutY="107.0" prefHeight="17.0" prefWidth="191.0" text="Inventory ID" />
+                  <Label layoutX="773.0" layoutY="16.0" text="User Remarks" />
+                  <Label layoutX="311.0" layoutY="16.0" text="Assigned to" />
+                  <Label layoutX="311.0" layoutY="37.0" text="Assigned Timestamp" />
+                  <Label fx:id="aTo" layoutX="445.0" layoutY="16.0" prefHeight="17.0" prefWidth="291.0" text="ID" />
+                  <Label fx:id="aTS" layoutX="445.0" layoutY="37.0" prefHeight="17.0" prefWidth="226.0" text="ID" />
                </children>
             </AnchorPane>
         </content>
       </TitledPane>
       <Label layoutX="28.0" layoutY="211.0" text="Worker Assignment" />
-      <TableView fx:id="emp_Table" focusTraversable="false" layoutX="28.0" layoutY="242.0" prefHeight="321.0" prefWidth="885.0">
+      <TableView fx:id="emp_Table" focusTraversable="false" layoutX="27.0" layoutY="242.0" prefHeight="321.0" prefWidth="1089.0">
         <columns>
-            <TableColumn fx:id="empID" prefWidth="85.0" text="Employee ID" />
-            <TableColumn fx:id="fName" minWidth="0.0" prefWidth="225.0" text="Full Name" />
-            <TableColumn fx:id="email" minWidth="0.0" prefWidth="261.0" text="Email" />
-            <TableColumn fx:id="pTask" minWidth="0.0" prefWidth="88.0" text="Pending Tasks" />
-            <TableColumn fx:id="designation" minWidth="0.0" prefWidth="225.0" text="Designation" />
+            <TableColumn fx:id="empID" prefWidth="150.0" text="Employee ID" />
+            <TableColumn fx:id="fName" minWidth="0.0" prefWidth="300.0" text="Full Name" />
+            <TableColumn fx:id="email" minWidth="0.0" prefWidth="300.0" text="Email" />
+            <TableColumn fx:id="pTask" minWidth="0.0" prefWidth="100.0" text="Pending Tasks" />
+            <TableColumn fx:id="designation" minWidth="0.0" prefWidth="232.0" text="Designation" />
         </columns>
       </TableView>
       <TextArea fx:id="admin_remarks" layoutX="28.0" layoutY="596.0" prefHeight="82.0" prefWidth="497.0" promptText="Remrks..." wrapText="true" />
       <Label layoutX="28.0" layoutY="576.0" text="Remarks / Special Instructions" />
-      <TextField fx:id="search_box" layoutX="279.0" layoutY="207.0" prefHeight="25.0" prefWidth="394.0" promptText="Search workers">
+      <TextField fx:id="search_box" layoutX="717.0" layoutY="207.0" prefHeight="25.0" prefWidth="398.0" promptText="Search workers">
          <opaqueInsets>
             <Insets />
          </opaqueInsets>
@@ -45,8 +49,8 @@
             <Insets left="35.0" />
          </padding>
       </TextField>
-      <Label alignment="CENTER" layoutX="280.0" layoutY="208.0" prefHeight="23.0" prefWidth="28.0" style="-fx-background-color: #dedede;" text="🔍" />
-      <Button layoutX="763.0" layoutY="628.0" mnemonicParsing="false" onMouseClicked="#assign_clicked" prefHeight="44.0" prefWidth="147.0" text="Assign &gt;">
+      <Label alignment="CENTER" layoutX="718.0" layoutY="208.0" prefHeight="23.0" prefWidth="28.0" style="-fx-background-color: #dedede;" text="🔍" />
+      <Button layoutX="943.0" layoutY="615.0" mnemonicParsing="false" onMouseClicked="#assign_clicked" prefHeight="44.0" prefWidth="147.0" text="Assign &gt;">
          <font>
             <Font name="System Bold" size="20.0" />
          </font>

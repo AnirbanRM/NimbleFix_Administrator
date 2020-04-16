@@ -11,6 +11,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -108,6 +109,7 @@ public class Spectator implements Initializable {
     @FXML Canvas canvas;
     @FXML Label oui_box, organization_name_box,floor_id_box;
     @FXML AnchorPane canvas_field;
+    @FXML ScrollPane map_viewPoint;
     Pane info_pane;
 
     AboutComplaint aboutComplaintWindow;
@@ -198,7 +200,7 @@ public class Spectator implements Initializable {
     EventHandler<MouseEvent> canvashovered = new EventHandler<MouseEvent>() {
         @Override
         public void handle(MouseEvent event) {
-            if (currentFloorInventoryPoints == null)
+            if (currentFloorInventoryPoints == null || event.getY()> currentFloorInventoryPoints.length || event.getX() > currentFloorInventoryPoints[0].length )
                 return;
 
             InventoryItem i = currentFloorInventoryPoints[(int) event.getY()][(int) event.getX()];
@@ -291,11 +293,9 @@ public class Spectator implements Initializable {
                     ((FloorListItem)oldValue).cell.setBackground(new Background(new BackgroundFill(Color.valueOf("#ffffff"),CornerRadii.EMPTY,Insets.EMPTY)));
                 ((FloorListItem)newValue).cell.setBackground(new Background(new BackgroundFill(Color.valueOf("#ddddee"),CornerRadii.EMPTY,Insets.EMPTY)));
 
-
                 set_current_floor(((Label) ((Pane)(((FloorListItem) newValue).cell.getGraphic())).getChildrenUnmodifiable().get(0)).getText());
             }
         });
-
     }
 
     private void set_current_floor(String floor) {
@@ -321,9 +321,13 @@ public class Spectator implements Initializable {
                 super.updateItem(item, empty);
                 setBackground(new Background(new BackgroundFill(Color.valueOf("#efefef"), CornerRadii.EMPTY, Insets.EMPTY)));
                 if (!empty) {
-                    setBackground(new Background(new BackgroundFill(Color.valueOf("#efefef"), CornerRadii.EMPTY, Insets.EMPTY)));
-                    setBorder(new Border(new BorderStroke(null, Color.valueOf("#bcbcbc"), null, null, BorderStrokeStyle.NONE, BorderStrokeStyle.SOLID, BorderStrokeStyle.NONE, BorderStrokeStyle.NONE, new CornerRadii(0), BorderWidths.DEFAULT, Insets.EMPTY)));
+                    //setBackground(new Background(new BackgroundFill(Color.valueOf("#efefef"), CornerRadii.EMPTY, Insets.EMPTY)));
+                    if(item.complaint.getAssignedTo()==null)
+                        setBackground(new Background(new BackgroundFill(Color.valueOf("#ffcfcf"), CornerRadii.EMPTY, Insets.EMPTY)));
+                    else
+                        setBackground(new Background(new BackgroundFill(Color.valueOf("#fff9bd"), CornerRadii.EMPTY, Insets.EMPTY)));
 
+                    setBorder(new Border(new BorderStroke(null, Color.valueOf("#bcbcbc"), null, null, BorderStrokeStyle.NONE, BorderStrokeStyle.SOLID, BorderStrokeStyle.NONE, BorderStrokeStyle.NONE, new CornerRadii(0), BorderWidths.DEFAULT, Insets.EMPTY)));
                     setPrefWidth(250);
 
                     Pane p = new Pane();
@@ -341,14 +345,15 @@ public class Spectator implements Initializable {
                     invIDLabel.setFont(Font.font(null, FontWeight.NORMAL, 10));
                     invIDLabel.setText(item.inventoryItem.getId());
 
-                    Label commplDateLabel = new Label();
-                    commplDateLabel.setText("DATE TIME");
-                    commplDateLabel.setFont(Font.font(12));
-                    commplDateLabel.setLayoutX(5);
-                    commplDateLabel.setLayoutY(42);
+                    Label complDateLabel = new Label();
+                    complDateLabel.setText("DATE TIME");
+                    complDateLabel.setFont(Font.font(12));
+                    complDateLabel.setLayoutX(5);
+                    complDateLabel.setLayoutY(42);
+                    complDateLabel.setText(item.getComplaint().getComplaintDateTime());
 
                     item.cell=this;
-                    p.getChildren().addAll(floorLabel,invIDLabel,commplDateLabel);
+                    p.getChildren().addAll(floorLabel,invIDLabel,complDateLabel);
                     setGraphic(p);
 
                     setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -364,17 +369,21 @@ public class Spectator implements Initializable {
                                     Stage primaryStage= new Stage();
                                     aboutComplaintWindow.curr_stage = primaryStage;
                                     primaryStage.setTitle("Complaint " + item.complaint.getInventoryID());
-                                    primaryStage.setScene(new Scene(root, 940, 700));
+                                    primaryStage.setScene(new Scene(root, 1140, 700));
                                     primaryStage.setResizable(false);
                                     primaryStage.show();
 
                                     ((AboutComplaint)loader.getController()).init();
                                 } catch (IOException e) { System.out.println(e.getMessage().toString());}
                             }
+                            else if(event.getClickCount()==1){
+                                focusToInventory(item.getInventoryItem());
+                            }
                         }
                     });
                 } else {
                     setGraphic(null);
+                    setOnMouseClicked(mouseEvent -> complaintlistview.getSelectionModel().clearSelection());
                     setBackground(new Background(new BackgroundFill(Color.valueOf("#efefef"), CornerRadii.EMPTY, Insets.EMPTY)));
                     setBorder(new Border(new BorderStroke(null, null, null, null)));
                 }
@@ -384,12 +393,33 @@ public class Spectator implements Initializable {
         complaintlistview.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
             @Override
             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-                if(oldValue!=null)
-                    ((ComplaintListItem)oldValue).cell.setBackground(new Background(new BackgroundFill(Color.valueOf("#efefef"),CornerRadii.EMPTY,Insets.EMPTY)));
-                ((ComplaintListItem)newValue).cell.setBackground(new Background(new BackgroundFill(Color.valueOf("#ddddee"),CornerRadii.EMPTY,Insets.EMPTY)));
+                if(oldValue!=null) {
+                    if(((ComplaintListItem) oldValue).complaint.getAssignedTo()==null)
+                        ((ComplaintListItem) oldValue).cell.setBackground(new Background(new BackgroundFill(Color.valueOf("#ffcfcf"), CornerRadii.EMPTY, Insets.EMPTY)));
+                    else
+                        ((ComplaintListItem) oldValue).cell.setBackground(new Background(new BackgroundFill(Color.valueOf("#fff9bd"), CornerRadii.EMPTY, Insets.EMPTY)));
+                }
+                if(newValue!=null) {
+                    ((ComplaintListItem) newValue).cell.setBackground(new Background(new BackgroundFill(Color.valueOf("#ddddee"), CornerRadii.EMPTY, Insets.EMPTY)));
+                }
             }
         });
+    }
 
+    private void focusToInventory(InventoryItem inventoryItem) {
+        int i = 0;
+        for(OrganizationalFloors f : current_organization.getFloors()){
+            if(f.getInventories().get(inventoryItem.getId())==null){i++;continue;}
+            else{
+                floorlistview.getSelectionModel().select(i);
+
+                Platform.runLater(()->{
+                    map_viewPoint.setVvalue((inventoryItem.getLocation().getY()-map_viewPoint.getViewportBounds().getHeight()/2)/(canvas.getHeight()-map_viewPoint.getViewportBounds().getHeight()));
+                    map_viewPoint.setHvalue((inventoryItem.getLocation().getX()-map_viewPoint.getViewportBounds().getWidth()/2)/(canvas.getWidth()-map_viewPoint.getViewportBounds().getWidth()));
+                });
+                break;
+            }
+        }
     }
 
     public void startComplaintListener () {

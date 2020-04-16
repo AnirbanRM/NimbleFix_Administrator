@@ -37,7 +37,7 @@
             <Label fx:id="oui_box" alignment="CENTER_RIGHT" layoutX="848.0" layoutY="18.0" prefHeight="17.0" prefWidth="137.0" text="XXXXXXXXXXXXXX" AnchorPane.bottomAnchor="17.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="18.0" />
             <Label fx:id="floor_id_box" layoutX="14.0" layoutY="33.0" text="No floor selected" />
          </children></AnchorPane>
-      <ScrollPane focusTraversable="false" layoutX="200.0" layoutY="78.0" prefHeight="540.0" prefWidth="1006.0" AnchorPane.bottomAnchor="82.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="78.0">
+      <ScrollPane fx:id="map_viewPoint" focusTraversable="false" layoutX="200.0" layoutY="78.0" prefHeight="503.0" prefWidth="1000.0" AnchorPane.bottomAnchor="119.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="78.0">
          <content>
             <AnchorPane fx:id="canvas_field" prefHeight="200.0" prefWidth="200.0">
                <children>
@@ -46,6 +46,23 @@
             </AnchorPane>
          </content>
       </ScrollPane>
-      <ListView fx:id="complaintlistview" focusTraversable="false" layoutX="199.0" layoutY="682.0" nodeOrientation="LEFT_TO_RIGHT" orientation="HORIZONTAL" prefHeight="84.0" prefWidth="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="199.0" AnchorPane.rightAnchor="0.0" />
+      <TabPane layoutX="200.0" layoutY="582.0" prefHeight="117.0" prefWidth="1001.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="0.0">
+        <tabs>
+          <Tab text="Complaints">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <ListView fx:id="complaintlistview" focusTraversable="false" nodeOrientation="LEFT_TO_RIGHT" orientation="HORIZONTAL" prefHeight="90.0" prefWidth="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="Maintainence">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+            </content>
+          </Tab>
+        </tabs>
+      </TabPane>
    </children>
 </AnchorPane>

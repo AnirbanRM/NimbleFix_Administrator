@@ -176,7 +176,7 @@ public class Editor implements Initializable {
         Stage stage = new Stage();
         stage.setTitle("Dashboard");
         stage.setResizable(false);
-        stage.setScene(new Scene(root, 800, 500));
+        stage.setScene(new Scene(root, 800, 640));
         ((Dashboard)loader.getController()).curr_stg=stage;
 
         StringBuilder sb = new StringBuilder();
