@@ -486,6 +486,13 @@ public class Dashboard implements Initializable {
             a.showAndWait();
         }
     }
+
+    public void invHistoryClicked(MouseEvent mouseEvent) {
+
+
+    }
+
+
 }
 
 

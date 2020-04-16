@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.canvas.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.shape.*?>
+
+<AnchorPane prefHeight="700.0" prefWidth="1300.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.nimblefix.InventoryHistory">
+   <children>
+      <TreeView focusTraversable="false" layoutX="21.0" layoutY="22.0" prefHeight="655.0" prefWidth="339.0" AnchorPane.bottomAnchor="23.0" AnchorPane.leftAnchor="21.0" AnchorPane.topAnchor="22.0" />
+      <ScrollPane fx:id="mainViewPoint" focusTraversable="false" layoutX="374.0" layoutY="61.0" prefHeight="616.0" prefWidth="903.0" AnchorPane.bottomAnchor="23.0" AnchorPane.leftAnchor="374.0" AnchorPane.rightAnchor="23.0" AnchorPane.topAnchor="61.0">
+        <content>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="3150.0" prefWidth="3650.0">
+               <children>
+                  <Canvas fx:id="calendar" height="3100.0" translateX="50.0" width="3600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+
+                  <AnchorPane fx:id="datePane" prefHeight="31000.0" prefWidth="50.0" translateY="50.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <Canvas fx:id="date_header" height="3100.0" width="50.0" />
+                     </children>
+                     <effect>
+                        <DropShadow blurType="ONE_PASS_BOX" height="0.0" radius="18.7725" spread="0.26" width="77.09">
+                           <color>
+                              <Color opacity="0.604347825050354" />
+                           </color></DropShadow>
+                     </effect>
+                  </AnchorPane>
+                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="51.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="51.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <AnchorPane fx:id="monthPane" prefHeight="50.0" prefWidth="3600.0" style="-fx-background-color: #f3f2f1;" translateX="50.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <effect>
+                        <DropShadow blurType="ONE_PASS_BOX" height="77.09" radius="18.7725" spread="0.26" width="0.0">
+                           <color>
+                              <Color opacity="0.604347825050354" />
+                           </color></DropShadow>
+                     </effect>
+                     <children>
+                        <Canvas fx:id="month_header" height="50.0" width="3600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                     </children>
+                  </AnchorPane>
+               </children>
+            </AnchorPane>
+        </content>
+      </ScrollPane>
+   </children>
+</AnchorPane>

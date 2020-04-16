@@ -65,7 +65,7 @@
             </Label>
          </children>
       </Pane>
-      <Pane fx:id="inventoryHistory" layoutX="481.0" layoutY="381.0" onMouseClicked="#workerMgmtClicked" prefHeight="44.0" prefWidth="213.0" style="-fx-background-color: #320670;">
+      <Pane fx:id="inventoryHistory" layoutX="481.0" layoutY="381.0" onMouseClicked="#invHistoryClicked" prefHeight="44.0" prefWidth="213.0" style="-fx-background-color: #320670;">
          <children>
             <Label layoutX="38.0" layoutY="9.0" text="Inventory History" textFill="WHITE">
                <font>
