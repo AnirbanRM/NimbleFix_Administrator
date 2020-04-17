@@ -14,7 +14,9 @@
         <content>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="3150.0" prefWidth="3650.0">
                <children>
-                  <Canvas fx:id="calendar" height="3100.0" translateX="50.0" width="3600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <Canvas fx:id="calendar" height="3100.0" width="3600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <AnchorPane fx:id="event_holder" prefHeight="3100.0" prefWidth="3600.0" translateX="50.0" translateY="50.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <Canvas fx:id="overlay_canvas" height="3100.0" width="3600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
 
                   <AnchorPane fx:id="datePane" prefHeight="31000.0" prefWidth="50.0" translateY="50.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
@@ -27,7 +29,7 @@
                            </color></DropShadow>
                      </effect>
                   </AnchorPane>
-                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="51.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="51.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#4d089a" height="51.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="51.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
                   <AnchorPane fx:id="monthPane" prefHeight="50.0" prefWidth="3600.0" style="-fx-background-color: #f3f2f1;" translateX="50.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <effect>
                         <DropShadow blurType="ONE_PASS_BOX" height="77.09" radius="18.7725" spread="0.26" width="0.0">
