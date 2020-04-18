@@ -1,16 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.canvas.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.effect.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
 
 <AnchorPane prefHeight="700.0" prefWidth="1300.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.nimblefix.InventoryHistory">
    <children>
-      <TreeView focusTraversable="false" layoutX="21.0" layoutY="22.0" prefHeight="655.0" prefWidth="339.0" AnchorPane.bottomAnchor="23.0" AnchorPane.leftAnchor="21.0" AnchorPane.topAnchor="22.0" />
-      <ScrollPane fx:id="mainViewPoint" focusTraversable="false" layoutX="374.0" layoutY="61.0" prefHeight="616.0" prefWidth="903.0" AnchorPane.bottomAnchor="23.0" AnchorPane.leftAnchor="374.0" AnchorPane.rightAnchor="23.0" AnchorPane.topAnchor="61.0">
+      <TextField fx:id="search_box" layoutX="19.0" layoutY="113.0" prefHeight="25.0" prefWidth="339.0" promptText="Search Inventory">
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+         <padding>
+            <Insets left="35.0" />
+         </padding>
+      </TextField>
+      <Label alignment="CENTER" layoutX="19.0" layoutY="114.0" prefHeight="23.0" prefWidth="28.0" style="-fx-background-color: #dedede;" text="🔍" />
+      <TreeView fx:id="inventoryTree" focusTraversable="false" layoutX="21.0" layoutY="150.0" prefHeight="527.0" prefWidth="339.0" AnchorPane.bottomAnchor="23.0" AnchorPane.leftAnchor="21.0" AnchorPane.topAnchor="150.0" />
+      <ScrollPane fx:id="mainViewPoint" focusTraversable="false" layoutX="374.0" layoutY="77.0" prefHeight="600.0" prefWidth="903.0" AnchorPane.bottomAnchor="23.0" AnchorPane.leftAnchor="374.0" AnchorPane.rightAnchor="23.0" AnchorPane.topAnchor="77.0">
         <content>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="3150.0" prefWidth="3650.0">
                <children>
@@ -45,5 +56,12 @@
             </AnchorPane>
         </content>
       </ScrollPane>
+      <Label fx:id="orgName" layoutX="21.0" layoutY="14.0" text="OrganizationName">
+         <font>
+            <Font name="System Bold" size="20.0" />
+         </font>
+      </Label>
+      <Label fx:id="orgID" layoutX="21.0" layoutY="45.0" text="OrganizationID" />
+      <ChoiceBox fx:id="floordropdown" layoutX="141.0" layoutY="77.0" prefHeight="25.0" prefWidth="219.0" />
    </children>
 </AnchorPane>

@@ -487,7 +487,46 @@ public class Dashboard implements Initializable {
         }
     }
 
-    public void invHistoryClicked(MouseEvent mouseEvent) {
+    public void invHistoryClicked(MouseEvent mouseEvent) throws Exception{
+        if(list.getSelectionModel().getSelectedIndex()>=0){
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("InventoryHistoryUI.fxml"));
+            Parent root = loader.load();
+            Stage primaryStage = new Stage();
+            primaryStage.setTitle("Inventory History");
+            primaryStage.setScene(new Scene(root, 1300, 700));
+
+            primaryStage.show();
+
+            ((InventoryHistory) loader.getController()).curr_stg = primaryStage;
+            ((InventoryHistory) loader.getController()).client = client;
+            ((InventoryHistory) loader.getController()).setExtra( ((ListItem) list.getSelectionModel().getSelectedItem()).getOrganizationID(), ((ListItem) list.getSelectionModel().getSelectedItem()).getOrganizationName());
+
+            primaryStage.show();
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        OrganizationsExchangerMessage organizationsExchangerMessage = new OrganizationsExchangerMessage(client.clientID, OrganizationsExchangerMessage.messageType.CLIENT_GET);
+                        organizationsExchangerMessage.setBody(((ListItem) list.getSelectionModel().getSelectedItem()).getOrganizationID());
+
+                        client.WRITER.writeUnshared(organizationsExchangerMessage);
+                        Object organizationResponse = client.readNext();
+
+                        if (organizationResponse instanceof OrganizationsExchangerMessage) {
+                            Platform.runLater(()->{ ((InventoryHistory) loader.getController()).setInventoryItems(((OrganizationsExchangerMessage)organizationResponse).getOrganizations().get(0).getCategories(), ((OrganizationsExchangerMessage)organizationResponse).getOrganizations().get(0).getFloors()); });
+                        }
+                    }catch (Exception e){ }
+                }
+            }).start();
+        }
+        else{
+            Alert a = new Alert(Alert.AlertType.ERROR ,null, ButtonType.OK);
+            a.setHeaderText("Please select an Organization to spectate.");
+            a.setTitle("Error");
+            a.showAndWait();
+        }
 
 
     }

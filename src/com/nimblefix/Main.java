@@ -10,26 +10,6 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("InventoryHistoryUI.fxml"));
-        Parent root = loader.load();
-        primaryStage.setTitle("Inventory History");
-        primaryStage.setScene(new Scene(root, 1300, 700));
-
-        ((InventoryHistory)loader.getController()).curr_stg = primaryStage;
-        primaryStage.show();
-
-
-
-
-
-
-
-
-
-        /*
-
-
         FXMLLoader loader = new FXMLLoader(getClass().getResource("LoginUI.fxml"));
         Parent root = loader.load();
         primaryStage.setTitle("Login");
@@ -38,11 +18,6 @@ public class Main extends Application {
 
         ((LoginUIController)loader.getController()).curr_stg = primaryStage;
         primaryStage.show();
-
-
-
-
-        */
     }
 
     public static void main(String[] args) {

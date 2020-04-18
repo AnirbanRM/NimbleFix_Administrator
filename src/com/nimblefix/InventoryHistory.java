@@ -1,6 +1,6 @@
 package com.nimblefix;
 
-import com.nimblefix.core.InventoryItem;
+import com.nimblefix.core.*;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -11,7 +11,7 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.*;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
@@ -23,24 +23,21 @@ import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
-import sun.font.FontFamily;
-import sun.util.calendar.LocalGregorianCalendar;
 
-import javax.swing.plaf.synth.ColorType;
 import java.net.URL;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.temporal.TemporalAccessor;
-import java.time.temporal.TemporalField;
-import java.time.temporal.TemporalUnit;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.ResourceBundle;
+import java.sql.Struct;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
-public class InventoryHistory implements Initializable, EventHandler<MouseEvent> {
-    public Stage curr_stg;
+public class InventoryHistory implements Initializable, EventHandler<MouseEvent>, ChangeListener {
+
+    Client client;
+    Stage curr_stg;
+    ArrayList<Category> categories;
+    ArrayList<OrganizationalFloors> floors;
+    String organizationID;
+    String organizationName;
 
     @FXML Canvas calendar;
     @FXML Canvas month_header;
@@ -53,12 +50,22 @@ public class InventoryHistory implements Initializable, EventHandler<MouseEvent>
 
     @FXML ScrollPane mainViewPoint;
 
+    @FXML Label orgName,orgID;
+    @FXML ChoiceBox floordropdown;
+    @FXML TextField search_box;
+    @FXML TreeView inventoryTree;
+
     GraphicsContext context,month_canvas_context,date_canvas_context;
 
     double xDIV,yDIV;
+    CustomTreeNode currentNode;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        floordropdown.getSelectionModel().selectedItemProperty().addListener(this);
+        search_box.textProperty().addListener(this);
+        inventoryTree.getSelectionModel().selectedItemProperty().addListener(this);
+
         context = calendar.getGraphicsContext2D();
         month_canvas_context = month_header.getGraphicsContext2D();
         date_canvas_context = date_header.getGraphicsContext2D();
@@ -69,6 +76,17 @@ public class InventoryHistory implements Initializable, EventHandler<MouseEvent>
         Platform.runLater(()->{
             initCalendar();
         });
+
+        InventoryItemHistory history = new InventoryItemHistory();
+        history.setAssignedTo("anirbanroymukherjee@outlook.com");
+        history.setInventoryID("223112312312");
+        history.setEventID("13211232312");
+        history.setEventType(InventoryItemHistory.Type.PAST);
+
+        Date s = Date.from(LocalDateTime.of(2020,4,14,1,35).toInstant(ZoneOffset.UTC));
+        history.setWorkDateTime(InventoryItemHistory.getDTString(s));
+
+        addEvent(history);
 
     }
 
@@ -93,8 +111,6 @@ public class InventoryHistory implements Initializable, EventHandler<MouseEvent>
         drawCalendar();
 
         setCurrentDateMarker();
-
-        addEvent(new InventoryHistory());
     }
 
 
@@ -172,8 +188,8 @@ public class InventoryHistory implements Initializable, EventHandler<MouseEvent>
     }
 
 
-    ArrayList<InventoryHistory> histories = new ArrayList<InventoryHistory>();
-    public void addEvent(InventoryHistory history){
+    ArrayList<InventoryItemHistory> histories = new ArrayList<InventoryItemHistory>();
+    public void addEvent(InventoryItemHistory history){
         histories.add(history);
         Pane p = new Pane();
         p.setMinHeight(yDIV-10);
@@ -182,8 +198,37 @@ public class InventoryHistory implements Initializable, EventHandler<MouseEvent>
         ArrayList<Double> dashes = new ArrayList<>();dashes.add(new Double(2)); dashes.add(new Double(10));
         p.setBorder(new Border(new BorderStroke(null,null,null,Color.WHITE,null,null,null,new BorderStrokeStyle(StrokeType.INSIDE, StrokeLineJoin.BEVEL , StrokeLineCap.SQUARE ,200,0, dashes) ,CornerRadii.EMPTY,new BorderWidths(0,0,0,5),Insets.EMPTY )));
 
-        p.setLayoutX(2*xDIV-2);
-        p.setLayoutY(3*yDIV+5);
+        Label datetimeLabel = new Label();
+        datetimeLabel.setLayoutX(20);
+        datetimeLabel.setLayoutY(10);
+        datetimeLabel.setFont(Font.font(null,FontWeight.BOLD,12));
+        datetimeLabel.setTextFill(Color.WHITE);
+
+        Label statusLabel = new Label();
+        statusLabel.setLayoutX(20);
+        statusLabel.setLayoutY(50);
+        statusLabel.setFont(Font.font(null,FontWeight.BOLD,12));
+        statusLabel.setTextFill(Color.WHITE);
+
+        Label assignedtoLabel = new Label();
+        assignedtoLabel.setLayoutX(20);
+        assignedtoLabel.setLayoutY(65);
+        assignedtoLabel.setFont(Font.font(null,FontWeight.BOLD,12));
+        assignedtoLabel.setTextFill(Color.WHITE);
+
+        p.getChildren().addAll(datetimeLabel,statusLabel,assignedtoLabel);
+
+        Date d = InventoryItemHistory.getDTDate(history.getWorkDateTime());
+        LocalDateTime dd = LocalDateTime.ofInstant(d.toInstant(), ZoneId.systemDefault());
+
+        p.setLayoutX((dd.getMonthValue()-1)*xDIV-2);
+        p.setLayoutY((dd.getDayOfMonth()-1)*yDIV+5);
+        datetimeLabel.setText(dd.getDayOfMonth()+"/"+dd.getMonthValue()+"/"+dd.getYear()+" "+ String.format("%02d",dd.getHour()) +":"+ String.format("%02d", dd.getMinute()));
+
+        if(history.getEventType()== InventoryItemHistory.Type.PAST) {
+            statusLabel.setText("Fixed by ");
+            assignedtoLabel.setText(history.getAssignedTo());
+        }
 
         event_holder.getChildren().add(p);
     }
@@ -194,5 +239,85 @@ public class InventoryHistory implements Initializable, EventHandler<MouseEvent>
         redrawGridLines();
         context.setFill(Color.valueOf("#ededed"));
         context.fillRect(Math.floor(event.getX()/xDIV)*xDIV,Math.floor(event.getY()/yDIV)*yDIV,xDIV,yDIV);
+    }
+
+
+    public void setExtra(String organizationID, String organizationName) {
+        this.organizationID = organizationID;
+        this.organizationName = organizationName;
+        orgID.setText(organizationID);
+        orgName.setText(organizationName);
+    }
+
+    public void setInventoryItems(ArrayList<Category> categories, ArrayList<OrganizationalFloors> floors) {
+        this.categories = categories;
+        this.floors = floors;
+        setFloorItems(floors);
+        setFilterInventory(search_box.getText(), floordropdown.getSelectionModel().getSelectedItem().toString());
+    }
+
+    private void setFloorItems(ArrayList<OrganizationalFloors> floors) {
+        floordropdown.getItems().add("Any Floor");
+        for(OrganizationalFloors f : floors)
+            floordropdown.getItems().add(f.getFloorID());
+        floordropdown.getSelectionModel().select(0);
+    }
+
+    private void setFilterInventory(String filterstring, String floorID){
+        Map<String,CustomTreeNode<String>> categoryTree = new HashMap<>();
+        CustomTreeNode<String> root = new CustomTreeNode("Inventory Items",CustomTreeNode.Type.ROOT);
+        inventoryTree.setRoot(root);
+        root.expandedProperty().setValue(true);
+
+        CustomTreeNode<String> temp = null;
+        for(Category i : categories){
+            temp = new CustomTreeNode(i.getCategoryString(),CustomTreeNode.Type.CATEGORY,i.getUniqueID());
+            categoryTree.put(i.getUniqueID(),temp);
+            root.getChildren().add(temp);
+        }
+        temp = new CustomTreeNode("UnCategorized Items",CustomTreeNode.Type.CATEGORY);
+        categoryTree.put("NONE",temp);
+        root.getChildren().add(temp);
+
+        boolean all = false;
+        if(floordropdown.getSelectionModel().getSelectedIndex()==0)all = true;
+
+        for (OrganizationalFloors f : floors) {
+            if((!all && f.getFloorID().equals(floorID)) || all) {
+                for (InventoryItem i : f.getInventories().values()) {
+                    if(!(i.getId()+i.getTitle()).toLowerCase().contains(filterstring.toLowerCase()))continue;
+                    CustomTreeNode<String> item = categoryTree.get(i.getCategoryTag());
+                    if (item == null) {
+                        categoryTree.get("NONE").getChildren().add(new CustomTreeNode(i.getTitle() + " (" + i.getId() + ")",CustomTreeNode.Type.ITEM,i.getId()));
+                        categoryTree.get("NONE").setExpanded(true);
+                    }
+                    else {
+                        item.getChildren().add(new CustomTreeNode(i.getTitle() + " (" + i.getId() + ")",CustomTreeNode.Type.ITEM,i.getId()));
+                        item.setExpanded(true);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+        if(newValue instanceof String) {
+            if (newValue == null || search_box == null) return;
+            setFilterInventory(search_box.getText(), floordropdown.getSelectionModel().getSelectedItem().toString());
+        }
+        else if(newValue instanceof CustomTreeNode){
+            CustomTreeNode item = (CustomTreeNode) newValue;
+            currentNode = item;
+            setHistoryItem();
+        }
+    }
+
+    private void setHistoryItem() {
+        if(currentNode.getType() == CustomTreeNode.Type.ROOT || currentNode.getType() == CustomTreeNode.Type.CATEGORY){
+        }
+
+        else if(currentNode.getType()== CustomTreeNode.Type.ITEM){
+        }
     }
 }

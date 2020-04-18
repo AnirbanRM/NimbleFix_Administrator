@@ -150,7 +150,7 @@ public class InventoryMaintainence implements Initializable, ChangeListener{
     public void changed(ObservableValue observable, Object oldValue, Object newValue) {
         if(newValue instanceof String) {
             if (newValue == null || search_box == null) return;
-            setFilterInventory(search_box.getText(), newValue.toString());
+            setFilterInventory(search_box.getText(), floordropdown.getSelectionModel().getSelectedItem().toString());
         }
         else if(newValue instanceof CustomTreeNode){
             CustomTreeNode item = (CustomTreeNode) newValue;
