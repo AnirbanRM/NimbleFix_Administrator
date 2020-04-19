@@ -1,5 +1,6 @@
 package com.nimblefix;
 
+import com.nimblefix.ControlMessages.HistoryMessage;
 import com.nimblefix.core.*;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -57,6 +58,7 @@ public class InventoryHistory implements Initializable, EventHandler<MouseEvent>
 
     GraphicsContext context,month_canvas_context,date_canvas_context;
 
+    Map<String, List<InventoryItemHistory>> histories = new HashMap<String, List<InventoryItemHistory>>();
     double xDIV,yDIV;
     CustomTreeNode currentNode;
 
@@ -76,18 +78,6 @@ public class InventoryHistory implements Initializable, EventHandler<MouseEvent>
         Platform.runLater(()->{
             initCalendar();
         });
-
-        InventoryItemHistory history = new InventoryItemHistory();
-        history.setAssignedTo("anirbanroymukherjee@outlook.com");
-        history.setInventoryID("223112312312");
-        history.setEventID("13211232312");
-        history.setEventType(InventoryItemHistory.Type.PAST);
-
-        Date s = Date.from(LocalDateTime.of(2020,4,14,1,35).toInstant(ZoneOffset.UTC));
-        history.setWorkDateTime(InventoryItemHistory.getDTString(s));
-
-        addEvent(history);
-
     }
 
 
@@ -136,7 +126,6 @@ public class InventoryHistory implements Initializable, EventHandler<MouseEvent>
             month_canvas_context.strokeLine(i * xDIV, 0, i * xDIV, month_header.getHeight());
         }
 
-
         //Days
         date_canvas_context.setStroke(Color.valueOf("#ffffff"));
         date_canvas_context.setFill(Color.valueOf("#ffffff"));
@@ -146,7 +135,6 @@ public class InventoryHistory implements Initializable, EventHandler<MouseEvent>
             date_canvas_context.fillText(String.valueOf(i + 1), 10, yDIV * i + 60);
             date_canvas_context.strokeLine(0, i * yDIV, date_header.getWidth(), i * yDIV);
         }
-        
 
         redrawGridLines();
     }
@@ -187,10 +175,7 @@ public class InventoryHistory implements Initializable, EventHandler<MouseEvent>
         context.fillOval(xDIV*localDateTime.getMonthValue()-point_radius,yDIV*(localDateTime.getDayOfMonth()-1)-point_radius + timeCorrection,2*point_radius,2*point_radius);
     }
 
-
-    ArrayList<InventoryItemHistory> histories = new ArrayList<InventoryItemHistory>();
     public void addEvent(InventoryItemHistory history){
-        histories.add(history);
         Pane p = new Pane();
         p.setMinHeight(yDIV-10);
         p.setMinWidth(xDIV-20);
@@ -223,13 +208,28 @@ public class InventoryHistory implements Initializable, EventHandler<MouseEvent>
 
         p.setLayoutX((dd.getMonthValue()-1)*xDIV-2);
         p.setLayoutY((dd.getDayOfMonth()-1)*yDIV+5);
+
         datetimeLabel.setText(dd.getDayOfMonth()+"/"+dd.getMonthValue()+"/"+dd.getYear()+" "+ String.format("%02d",dd.getHour()) +":"+ String.format("%02d", dd.getMinute()));
 
-        if(history.getEventType()== InventoryItemHistory.Type.PAST) {
-            statusLabel.setText("Fixed by ");
+        if(history.getEventType()== InventoryItemHistory.Type.REGISTERED) {
+            statusLabel.setText("New Complaint Registered ");
+            assignedtoLabel.setText("");
+        }
+        else if(history.getEventType()== InventoryItemHistory.Type.FIXED){
+            statusLabel.setText("Fixed by");
             assignedtoLabel.setText(history.getAssignedTo());
         }
-
+        else if(history.getEventType()== InventoryItemHistory.Type.ASSIGNED){
+            statusLabel.setText("Assigned to");
+            assignedtoLabel.setText(history.getAssignedTo());
+        }
+        else if(history.getEventType()== InventoryItemHistory.Type.POSTPONED) {
+            statusLabel.setText("Postponed by");
+            assignedtoLabel.setText(history.getAssignedTo());
+        }
+        else if(history.getEventType()== InventoryItemHistory.Type.FUTURE) {
+            statusLabel.setText("Periodic Maintenance Schedule");
+        }
         event_holder.getChildren().add(p);
     }
 
@@ -240,7 +240,6 @@ public class InventoryHistory implements Initializable, EventHandler<MouseEvent>
         context.setFill(Color.valueOf("#ededed"));
         context.fillRect(Math.floor(event.getX()/xDIV)*xDIV,Math.floor(event.getY()/yDIV)*yDIV,xDIV,yDIV);
     }
-
 
     public void setExtra(String organizationID, String organizationName) {
         this.organizationID = organizationID;
@@ -315,9 +314,22 @@ public class InventoryHistory implements Initializable, EventHandler<MouseEvent>
 
     private void setHistoryItem() {
         if(currentNode.getType() == CustomTreeNode.Type.ROOT || currentNode.getType() == CustomTreeNode.Type.CATEGORY){
+            event_holder.getChildren().clear();
         }
 
         else if(currentNode.getType()== CustomTreeNode.Type.ITEM){
+            event_holder.getChildren().clear();
+            List<InventoryItemHistory> hs = histories.get(currentNode.getuID());
+            if(hs!=null)
+                for(InventoryItemHistory hitem : hs)
+                    addEvent(hitem);
+        }
+    }
+
+    public void setHistories(Map<String, InventoryItemHistory> history){
+        for(InventoryItemHistory h : history.values()) {
+            histories.putIfAbsent(h.getInventoryID(), new ArrayList<InventoryItemHistory>());
+            histories.get(h.getInventoryID()).add(h);
         }
     }
 }

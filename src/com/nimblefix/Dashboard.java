@@ -1,8 +1,10 @@
 package com.nimblefix;
 
+import com.nimblefix.ControlMessages.HistoryMessage;
 import com.nimblefix.ControlMessages.MonitorMessage;
 import com.nimblefix.ControlMessages.OrganizationsExchangerMessage;
 import com.nimblefix.core.InventoryItem;
+import com.nimblefix.core.InventoryItemHistory;
 import com.nimblefix.core.Organization;
 import com.nimblefix.core.OrganizationalFloors;
 import javafx.application.Platform;
@@ -508,6 +510,7 @@ public class Dashboard implements Initializable {
                 @Override
                 public void run() {
                     try {
+                        //Getting Inventory Items
                         OrganizationsExchangerMessage organizationsExchangerMessage = new OrganizationsExchangerMessage(client.clientID, OrganizationsExchangerMessage.messageType.CLIENT_GET);
                         organizationsExchangerMessage.setBody(((ListItem) list.getSelectionModel().getSelectedItem()).getOrganizationID());
 
@@ -517,10 +520,26 @@ public class Dashboard implements Initializable {
                         if (organizationResponse instanceof OrganizationsExchangerMessage) {
                             Platform.runLater(()->{ ((InventoryHistory) loader.getController()).setInventoryItems(((OrganizationsExchangerMessage)organizationResponse).getOrganizations().get(0).getCategories(), ((OrganizationsExchangerMessage)organizationResponse).getOrganizations().get(0).getFloors()); });
                         }
+
+                        //Getting History
+                        HistoryMessage message = new HistoryMessage(((ListItem) list.getSelectionModel().getSelectedItem()).getOrganizationID());
+                        message.setBody("FETCH");
+
+                        try {
+                            client.WRITER.reset();
+                            client.WRITER.writeUnshared(message);
+                        }catch (Exception e){}
+
+                        Object m = client.readNext();
+                        if(m instanceof HistoryMessage){
+                            final HistoryMessage respMessage = (HistoryMessage) m;
+                            Platform.runLater(()->{ ((InventoryHistory) loader.getController()).setHistories(respMessage.getHistories()); });
+                        }
                     }catch (Exception e){ }
                 }
             }).start();
         }
+
         else{
             Alert a = new Alert(Alert.AlertType.ERROR ,null, ButtonType.OK);
             a.setHeaderText("Please select an Organization to spectate.");

@@ -12,12 +12,20 @@ public class InventoryItemHistory implements Serializable {
     public static final String dateTimePattern = "yyyy-MM-dd'T'HH:mm:ssX";
 
     public static class Type{
-        public static final int PAST = 0;
-        public static final int FUTURE = 1;
+        public static final int REGISTERED = 0;
+        public static final int ASSIGNED = 1;
+        public static final int FIXED = 2;
+        public static final int POSTPONED = 3;
+        public static final int FUTURE = 4;
     }
 
     String oui,inventoryID,workDateTime,assignedTo,eventID,eventBody;
     int eventType;
+
+    public InventoryItemHistory(String organizationID,String inventoryID) {
+        this.oui = organizationID;
+        this.inventoryID = inventoryID;
+    }
 
     public String getOui() {
         return oui;
