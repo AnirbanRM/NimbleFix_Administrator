@@ -1,6 +1,7 @@
 package com.nimblefix;
 
 import com.nimblefix.ControlMessages.ComplaintMessage;
+import com.nimblefix.ControlMessages.PendingWorkMessage;
 import com.nimblefix.ControlMessages.WorkerExchangeMessage;
 import com.nimblefix.core.*;
 import javafx.application.Platform;
@@ -34,6 +35,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.ResourceBundle;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -361,10 +363,14 @@ public class Spectator implements Initializable {
                         public void handle(MouseEvent event) {
                             if(event.getClickCount()==2){
                                 try {
+                                    OrganizationalFloors currentFloor = null;
+                                    for(OrganizationalFloors f : current_organization.getFloors())
+                                        if(f.getFloorID().equals(getItem().getFloorID()))currentFloor = f;
+
                                     FXMLLoader loader = new FXMLLoader(getClass().getResource("AboutComplaintUI.fxml"));
                                     Parent root = null;
                                     root = loader.load();
-                                    ((AboutComplaint)loader.getController()).setParam(client, getItem().getComplaint(),getItem().getInventoryItem(),current_organization.getCategories());
+                                    ((AboutComplaint)loader.getController()).setParam(client, getItem().getComplaint(),getItem().getInventoryItem(), currentFloor, current_organization.getCategories());
                                     aboutComplaintWindow = loader.getController();
                                     Stage primaryStage= new Stage();
                                     aboutComplaintWindow.curr_stage = primaryStage;
@@ -461,12 +467,26 @@ public class Spectator implements Initializable {
                                 }
                             }).start();
                         }
+                        else if(o instanceof PendingWorkMessage){
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    set_Pending((PendingWorkMessage) temp);
+                                }
+                            }).start();
+                        }
                     } else
                         break;
                 }
             }
         });
         receiverthd.start();
+    }
+
+    private void set_Pending(PendingWorkMessage temp) {
+        Platform.runLater(()->{
+            aboutComplaintWindow.setPendingTask((HashMap<String,Integer>)temp.getPendingTasks());
+        });
     }
 
     private void handle_workers(WorkerExchangeMessage workerExchangeMessage) {

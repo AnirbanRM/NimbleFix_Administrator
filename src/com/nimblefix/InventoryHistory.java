@@ -1,6 +1,5 @@
 package com.nimblefix;
 
-import com.nimblefix.ControlMessages.HistoryMessage;
 import com.nimblefix.core.*;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -8,13 +7,11 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Bounds;
+
 import javafx.geometry.Insets;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
-import javafx.scene.effect.BlurType;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -26,9 +23,7 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
 import java.net.URL;
-import java.sql.Struct;
 import java.time.*;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class InventoryHistory implements Initializable, EventHandler<MouseEvent>, ChangeListener {
