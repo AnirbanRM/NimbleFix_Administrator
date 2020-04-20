@@ -1,7 +1,7 @@
 package com.nimblefix.ControlMessages;
 
 import com.nimblefix.core.Complaint;
-import com.nimblefix.core.InventoryItem;
+import com.nimblefix.core.CompactInventoryItem;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ public class ComplaintMessage implements Serializable {
     ArrayList<Complaint> complaints = new ArrayList<Complaint>();
     String body;
     byte[] location_image;
-    InventoryItem inventoryItem;
+    CompactInventoryItem inventoryItem;
     String floorID;
 
     public String getFloorID() {
@@ -22,11 +22,11 @@ public class ComplaintMessage implements Serializable {
         this.floorID = floorID;
     }
 
-    public InventoryItem getInventoryItem() {
+    public CompactInventoryItem getInventoryItem() {
         return inventoryItem;
     }
 
-    public void setInventoryItem(InventoryItem inventoryItem) {
+    public void setInventoryItem(CompactInventoryItem inventoryItem) {
         this.inventoryItem = inventoryItem;
     }
 

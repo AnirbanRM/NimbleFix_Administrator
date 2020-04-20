@@ -189,7 +189,7 @@ public class AboutComplaint implements Initializable {
         complaint.setAssignedTo(((Worker) emp_Table.getSelectionModel().getSelectedItem()).getEmail());
 
         ComplaintMessage complaintMessage = new ComplaintMessage(complaint);
-        complaintMessage.setInventoryItem(inventory);
+        complaintMessage.setInventoryItem(new CompactInventoryItem(inventory.getId(),inventory.getTitle(),inventory.getParentOrganization().getOrganization_Name()));
         complaintMessage.setFloorID(floor.getFloorID());
         byte[] scaled = null;
         try {
