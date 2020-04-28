@@ -1,12 +1,10 @@
 package com.nimblefix;
 
 import com.nimblefix.ControlMessages.HistoryMessage;
+import com.nimblefix.ControlMessages.MaintainenceMessage;
 import com.nimblefix.ControlMessages.MonitorMessage;
 import com.nimblefix.ControlMessages.OrganizationsExchangerMessage;
-import com.nimblefix.core.InventoryItem;
-import com.nimblefix.core.InventoryItemHistory;
-import com.nimblefix.core.Organization;
-import com.nimblefix.core.OrganizationalFloors;
+import com.nimblefix.core.*;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -31,6 +29,7 @@ import javafx.stage.Stage;
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.ResourceBundle;
 
 public class Dashboard implements Initializable {
@@ -471,13 +470,24 @@ public class Dashboard implements Initializable {
                         OrganizationsExchangerMessage organizationsExchangerMessage = new OrganizationsExchangerMessage(client.clientID, OrganizationsExchangerMessage.messageType.CLIENT_GET);
                         organizationsExchangerMessage.setBody(((ListItem) list.getSelectionModel().getSelectedItem()).getOrganizationID());
 
+                        MaintainenceMessage maintainenceMessage = new MaintainenceMessage(((ListItem)list.getSelectionModel().getSelectedItem()).organizationID ,new HashMap<String, InventoryMaintainenceClass>());
+                        maintainenceMessage.setBody("FETCH");
+
+                        client.WRITER.reset();
                         client.WRITER.writeUnshared(organizationsExchangerMessage);
                         Object organizationResponse = client.readNext();
 
-                        if (organizationResponse instanceof OrganizationsExchangerMessage) {
-                            Platform.runLater(()->{ ((InventoryMaintainence) loader.getController()).setInventoryItems(((OrganizationsExchangerMessage)organizationResponse).getOrganizations().get(0).getCategories(), ((OrganizationsExchangerMessage)organizationResponse).getOrganizations().get(0).getFloors()); });
+                        client.WRITER.reset();
+                        client.WRITER.writeUnshared(maintainenceMessage);
+                        Object maintainenceResponse = client.readNext();
+
+                        if (organizationResponse instanceof OrganizationsExchangerMessage && maintainenceMessage instanceof MaintainenceMessage) {
+                            Platform.runLater(() -> {
+                                ((InventoryMaintainence) loader.getController()).setInventoryItems(((OrganizationsExchangerMessage) organizationResponse).getOrganizations().get(0).getCategories(), ((OrganizationsExchangerMessage) organizationResponse).getOrganizations().get(0).getFloors(), ((MaintainenceMessage) maintainenceResponse).getMaintainenceMap());
+                            });
                         }
-                    }catch (Exception e){ }
+
+                    }catch (Exception e){ System.out.println(e.toString()); }
                 }
             }).start();
         }
@@ -497,8 +507,6 @@ public class Dashboard implements Initializable {
             Stage primaryStage = new Stage();
             primaryStage.setTitle("Inventory History");
             primaryStage.setScene(new Scene(root, 1300, 700));
-
-            primaryStage.show();
 
             ((InventoryHistory) loader.getController()).curr_stg = primaryStage;
             ((InventoryHistory) loader.getController()).client = client;
@@ -530,10 +538,25 @@ public class Dashboard implements Initializable {
                             client.WRITER.writeUnshared(message);
                         }catch (Exception e){}
 
-                        Object m = client.readNext();
-                        if(m instanceof HistoryMessage){
-                            final HistoryMessage respMessage = (HistoryMessage) m;
+                        Object historyMessage = client.readNext();
+                        if(historyMessage instanceof HistoryMessage){
+                            final HistoryMessage respMessage = (HistoryMessage) historyMessage;
                             Platform.runLater(()->{ ((InventoryHistory) loader.getController()).setHistories(respMessage.getHistories()); });
+                        }
+
+                        //Getting Maintainence
+                        MaintainenceMessage maintainenceMessage = new MaintainenceMessage(((ListItem)list.getSelectionModel().getSelectedItem()).organizationID ,new HashMap<String, InventoryMaintainenceClass>());
+                        maintainenceMessage.setBody("FETCH");
+
+                        try {
+                            client.WRITER.reset();
+                            client.WRITER.writeUnshared(maintainenceMessage);
+                        }catch (Exception e){}
+
+                        Object maintainenceResponse = client.readNext();
+                        if(maintainenceResponse instanceof MaintainenceMessage){
+                            final MaintainenceMessage respMessage = (MaintainenceMessage) maintainenceResponse;
+                            Platform.runLater(()->{ ((InventoryHistory) loader.getController()).setMaintainenceItem(respMessage.getMaintainenceMap()); });
                         }
                     }catch (Exception e){ }
                 }

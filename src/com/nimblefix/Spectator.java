@@ -1,6 +1,7 @@
 package com.nimblefix;
 
 import com.nimblefix.ControlMessages.ComplaintMessage;
+import com.nimblefix.ControlMessages.MaintainenceMessage;
 import com.nimblefix.ControlMessages.PendingWorkMessage;
 import com.nimblefix.ControlMessages.WorkerExchangeMessage;
 import com.nimblefix.core.*;
@@ -12,7 +13,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -40,6 +40,45 @@ import java.util.ResourceBundle;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Spectator implements Initializable {
+
+    private class MaintainenceListItem{
+        String floorID;
+        InventoryMaintainenceClass maintainence;
+        InventoryItem inventoryItem;
+        ListCell<MaintainenceListItem> cell;
+
+        MaintainenceListItem(String floorID,InventoryMaintainenceClass maintainence,InventoryItem inventoryItem){
+            this.maintainence = maintainence;
+            this.floorID = floorID;
+            this.inventoryItem = inventoryItem;
+        }
+
+        public String getFloorID() {
+            return floorID;
+        }
+
+        public InventoryMaintainenceClass getMaintainence() {
+            return maintainence;
+        }
+
+        public InventoryItem getInventoryItem() {
+            return inventoryItem;
+        }
+
+        public void setFloorID(String floorID) {
+            this.floorID = floorID;
+        }
+
+        public void setMaintainence(Complaint complaint) {
+            this.maintainence = maintainence;
+        }
+
+        public void setInventoryItem(InventoryItem inventoryItem) {
+            this.inventoryItem = inventoryItem;
+        }
+
+
+    }
 
     private class ComplaintListItem{
 
@@ -107,7 +146,7 @@ public class Spectator implements Initializable {
     OrganizationalFloors current_selected_floor=null;
     Image floor_background_image = null;
 
-    @FXML ListView complaintlistview, floorlistview;
+    @FXML ListView complaintlistview, floorlistview, maintainencelistview;
     @FXML Canvas canvas;
     @FXML Label oui_box, organization_name_box,floor_id_box;
     @FXML AnchorPane canvas_field;
@@ -120,6 +159,7 @@ public class Spectator implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         prepareComplaintListView();
         prepareFloorListView();
+        prepareMaintainenceListView();
         canvas.setOnMouseMoved(canvashovered);
 
         Platform.runLater(new Runnable() {
@@ -165,9 +205,22 @@ public class Spectator implements Initializable {
 
                 info_pane.getChildren().addAll(title,category,desc);
 
-                new Thread(() -> getPreviousComplaints()).start();
+                new Thread(() -> {
+                    getPreviousComplaints();
+                    getMaintainence();
+                }).start();
             }
         });
+    }
+
+    private void getMaintainence() {
+        MaintainenceMessage maintainenceMessage = new MaintainenceMessage(current_organization.getOui(),new HashMap<String, InventoryMaintainenceClass>());
+        maintainenceMessage.setBody("FETCH");
+
+        try {
+            client.WRITER.reset();
+            client.WRITER.writeUnshared(maintainenceMessage);
+        }catch (Exception e){ }
     }
 
     private void getPreviousComplaints() {
@@ -348,7 +401,6 @@ public class Spectator implements Initializable {
                     invIDLabel.setText(item.inventoryItem.getId());
 
                     Label complDateLabel = new Label();
-                    complDateLabel.setText("DATE TIME");
                     complDateLabel.setFont(Font.font(12));
                     complDateLabel.setLayoutX(5);
                     complDateLabel.setLayoutY(42);
@@ -411,6 +463,108 @@ public class Spectator implements Initializable {
             }
         });
     }
+
+    private void prepareMaintainenceListView() {
+        maintainencelistview.setCellFactory(param -> new ListCell<Spectator.MaintainenceListItem>() {
+            @Override
+            protected void updateItem(Spectator.MaintainenceListItem item, boolean empty) {
+                super.updateItem(item, empty);
+                setBackground(new Background(new BackgroundFill(Color.valueOf("#efefef"), CornerRadii.EMPTY, Insets.EMPTY)));
+                if (!empty) {
+                    setBackground(new Background(new BackgroundFill(Color.valueOf("#efefef"), CornerRadii.EMPTY, Insets.EMPTY)));
+
+                    setBorder(new Border(new BorderStroke(null, Color.valueOf("#bcbcbc"), null, null, BorderStrokeStyle.NONE, BorderStrokeStyle.SOLID, BorderStrokeStyle.NONE, BorderStrokeStyle.NONE, new CornerRadii(0), BorderWidths.DEFAULT, Insets.EMPTY)));
+                    setPrefWidth(250);
+
+                    Pane p = new Pane();
+
+                    Label floorLabel = new Label();
+                    floorLabel.setLayoutX(5);
+                    floorLabel.setLayoutY(2);
+                    floorLabel.setFont(Font.font(null, FontWeight.BOLD, 15));
+
+                    floorLabel.setText(item.floorID + " - "+item.inventoryItem.getTitle());
+
+                    Label invIDLabel = new Label();
+                    invIDLabel.setLayoutY(22);
+                    invIDLabel.setLayoutX(5);
+                    invIDLabel.setFont(Font.font(null, FontWeight.NORMAL, 10));
+                    invIDLabel.setText(item.inventoryItem.getId());
+
+                    Label lastMaintDateLabel = new Label();
+                    lastMaintDateLabel.setFont(Font.font(12));
+                    lastMaintDateLabel.setLayoutX(5);
+                    lastMaintDateLabel.setLayoutY(30);
+                    lastMaintDateLabel.setText("Last maintainence on " + item.getMaintainence().getLastMaintainenceDate());
+
+                    Label dueMaintDateLabel = new Label();
+                    lastMaintDateLabel.setFont(Font.font(12));
+                    lastMaintDateLabel.setLayoutX(5);
+                    lastMaintDateLabel.setLayoutY(42);
+                    lastMaintDateLabel.setText("Due since " + item.getMaintainence().getLastMaintainenceDate());
+
+                    item.cell=this;
+                    p.getChildren().addAll(floorLabel,invIDLabel,lastMaintDateLabel,dueMaintDateLabel);
+                    setGraphic(p);
+
+                    setOnMouseClicked(new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent event) {
+                            /*if(event.getClickCount()==2){
+                                try {
+                                    OrganizationalFloors currentFloor = null;
+                                    for(OrganizationalFloors f : current_organization.getFloors())
+                                        if(f.getFloorID().equals(getItem().getFloorID()))currentFloor = f;
+
+                                    FXMLLoader loader = new FXMLLoader(getClass().getResource("AboutComplaintUI.fxml"));
+                                    Parent root = null;
+                                    root = loader.load();
+                                    ((AboutComplaint)loader.getController()).setParam(client, getItem().getComplaint() ,getItem().getInventoryItem(), currentFloor, current_organization.getCategories());
+                                    aboutComplaintWindow = loader.getController();
+                                    Stage primaryStage= new Stage();
+                                    aboutComplaintWindow.curr_stage = primaryStage;
+                                    primaryStage.setTitle("Complaint " + item.complaint.getInventoryID());
+                                    primaryStage.setScene(new Scene(root, 1140, 700));
+                                    primaryStage.setResizable(false);
+                                    primaryStage.show();
+
+                                    ((AboutComplaint)loader.getController()).init();
+                                } catch (IOException e) { System.out.println(e.getMessage().toString());}
+                            }
+                            else if(event.getClickCount()==1){
+                                focusToInventory(item.getInventoryItem());
+                            }*/
+                        }
+                    });
+                } else {
+                    setGraphic(null);
+                    setOnMouseClicked(mouseEvent -> complaintlistview.getSelectionModel().clearSelection());
+                    setBackground(new Background(new BackgroundFill(Color.valueOf("#efefef"), CornerRadii.EMPTY, Insets.EMPTY)));
+                    setBorder(new Border(new BorderStroke(null, null, null, null)));
+                }
+            }
+        });
+
+        complaintlistview.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
+            @Override
+            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+                if(oldValue!=null) {
+                    if(((ComplaintListItem) oldValue).complaint.getAssignedTo()==null)
+                        ((ComplaintListItem) oldValue).cell.setBackground(new Background(new BackgroundFill(Color.valueOf("#ffcfcf"), CornerRadii.EMPTY, Insets.EMPTY)));
+                    else
+                        ((ComplaintListItem) oldValue).cell.setBackground(new Background(new BackgroundFill(Color.valueOf("#fff9bd"), CornerRadii.EMPTY, Insets.EMPTY)));
+                }
+                if(newValue!=null) {
+                    ((ComplaintListItem) newValue).cell.setBackground(new Background(new BackgroundFill(Color.valueOf("#ddddee"), CornerRadii.EMPTY, Insets.EMPTY)));
+                }
+            }
+        });
+
+
+
+
+    }
+
 
     private void focusToInventory(InventoryItem inventoryItem) {
         int i = 0;
@@ -475,12 +629,25 @@ public class Spectator implements Initializable {
                                 }
                             }).start();
                         }
+                        else if(o instanceof MaintainenceMessage){
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    set_Maintainence((MaintainenceMessage) temp);
+                                }
+                            }).start();
+                        }
                     } else
                         break;
                 }
             }
         });
         receiverthd.start();
+    }
+
+    private void set_Maintainence(MaintainenceMessage temp) {
+        System.out.println(temp.getMaintainenceMap());
+
     }
 
     private void set_Pending(PendingWorkMessage temp) {

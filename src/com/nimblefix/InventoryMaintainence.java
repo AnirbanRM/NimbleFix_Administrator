@@ -92,13 +92,6 @@ public class InventoryMaintainence implements Initializable, ChangeListener{
         search_box.textProperty().addListener(this);
         inventoryTree.getSelectionModel().selectedItemProperty().addListener(this);
         set.setOnMouseClicked((mouseEvent)->updateMaintainence(currentNode));
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                // TODO : getMaintainencePreferences();
-            }
-        }).start();
     }
 
     //Using recursively..
@@ -184,7 +177,6 @@ public class InventoryMaintainence implements Initializable, ChangeListener{
                     particulardate.setSelected(true);
                     pDate.setValue(LocalDate.parse(itemMaintainence.getLastMaintainenceDate(),DateTimeFormatter.ofPattern(InventoryMaintainenceClass.DATEPATTERN)));
                 }catch (Exception e){
-                    System.out.println(e.toString());
                     //pDate.setValue(null);
                 }
             }
@@ -228,9 +220,10 @@ public class InventoryMaintainence implements Initializable, ChangeListener{
         }
     }
 
-    public void setInventoryItems(ArrayList<Category> categories, ArrayList<OrganizationalFloors> floors) {
+    public void setInventoryItems(ArrayList<Category> categories, ArrayList<OrganizationalFloors> floors, Map<String, InventoryMaintainenceClass> maintainenceMap) {
         this.categories = categories;
         this.floors = floors;
+        this.maintainenceMap = maintainenceMap;
         setFloorItems(floors);
         setFilterInventory(search_box.getText(), floordropdown.getSelectionModel().getSelectedItem().toString());
     }
