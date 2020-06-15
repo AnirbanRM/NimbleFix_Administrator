@@ -46,6 +46,7 @@ public class Spectator implements Initializable {
         InventoryMaintainenceClass maintainence;
         InventoryItem inventoryItem;
         ListCell<MaintainenceListItem> cell;
+        MaintainenceAssignedData assignedData = null;
 
         MaintainenceListItem(String floorID,InventoryMaintainenceClass maintainence,InventoryItem inventoryItem){
             this.maintainence = maintainence;
@@ -77,7 +78,16 @@ public class Spectator implements Initializable {
             this.inventoryItem = inventoryItem;
         }
 
+        public MaintainenceAssignedData getAssignedData() {
+            return assignedData;
+        }
 
+        public void setAssignedData(MaintainenceAssignedData assignedData) {
+            if(assignedData==null)
+                this.assignedData = new MaintainenceAssignedData();
+            else
+                this.assignedData = assignedData;
+        }
     }
 
     private class ComplaintListItem{
@@ -154,6 +164,7 @@ public class Spectator implements Initializable {
     Pane info_pane;
 
     AboutComplaint aboutComplaintWindow;
+    AboutFailedMaintainence aboutFailedMaintainenceWindow;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -510,30 +521,30 @@ public class Spectator implements Initializable {
                     setOnMouseClicked(new EventHandler<MouseEvent>() {
                         @Override
                         public void handle(MouseEvent event) {
-                            /*if(event.getClickCount()==2){
+                            if(event.getClickCount()==2){
                                 try {
                                     OrganizationalFloors currentFloor = null;
                                     for(OrganizationalFloors f : current_organization.getFloors())
-                                        if(f.getFloorID().equals(getItem().getFloorID()))currentFloor = f;
+                                        if(f.getFloorID().equals(getItem().getFloorID())){currentFloor = f; break;}
 
-                                    FXMLLoader loader = new FXMLLoader(getClass().getResource("AboutComplaintUI.fxml"));
+                                    FXMLLoader loader = new FXMLLoader(getClass().getResource("AboutFailedMaintainenceUI.fxml"));
                                     Parent root = null;
                                     root = loader.load();
-                                    ((AboutComplaint)loader.getController()).setParam(client, getItem().getComplaint() ,getItem().getInventoryItem(), currentFloor, current_organization.getCategories());
-                                    aboutComplaintWindow = loader.getController();
+                                    ((AboutFailedMaintainence)loader.getController()).setParam(client, getItem().getMaintainence(), getItem().getAssignedData() ,getItem().getInventoryItem(), currentFloor, current_organization.getCategories());
+                                    aboutFailedMaintainenceWindow = loader.getController();
                                     Stage primaryStage= new Stage();
-                                    aboutComplaintWindow.curr_stage = primaryStage;
-                                    primaryStage.setTitle("Complaint " + item.complaint.getInventoryID());
+                                    aboutFailedMaintainenceWindow.curr_stage = primaryStage;
+                                    primaryStage.setTitle("Pending Maintenance - " + item.maintainence.getInventoryID());
                                     primaryStage.setScene(new Scene(root, 1140, 700));
                                     primaryStage.setResizable(false);
                                     primaryStage.show();
 
-                                    ((AboutComplaint)loader.getController()).init();
+                                    ((AboutFailedMaintainence)loader.getController()).init();
                                 } catch (IOException e) { System.out.println(e.getMessage().toString());}
                             }
                             else if(event.getClickCount()==1){
                                 focusToInventory(item.getInventoryItem());
-                            }*/
+                            }
                         }
                     });
                 } else {
@@ -633,7 +644,7 @@ public class Spectator implements Initializable {
                             new Thread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    set_Maintainence((MaintainenceMessage) temp);
+                                    handle_Maintainence((MaintainenceMessage) temp);
                                 }
                             }).start();
                         }
@@ -645,14 +656,39 @@ public class Spectator implements Initializable {
         receiverthd.start();
     }
 
-    private void set_Maintainence(MaintainenceMessage temp) {
-        System.out.println(temp.getMaintainenceMap());
+    private void handle_Maintainence(MaintainenceMessage msg) {
+        if(msg.getBody()!=null && msg.getBody().contains("ASSIGNMENT")) {
+            aboutFailedMaintainenceWindow.onAssignmentreply(msg);
+        }
+        else set_Maintainence(msg);
+    }
 
+    private void set_Maintainence(MaintainenceMessage temp) {
+        if(temp.getMaintainenceMap()==null)return;
+        for(InventoryMaintainenceClass imc : temp.getMaintainenceMap().values()){
+            if(imc.isExpired()){
+                InventoryItem i=null;
+                OrganizationalFloors f = null;
+                for(OrganizationalFloors ofs : current_organization.getFloors()){
+                    if(ofs.getInventories().get(imc.getInventoryID())!=null){
+                        f = ofs;
+                        i = ofs.getInventories().get(imc.getInventoryID());
+                    }
+                }
+
+                MaintainenceListItem item = new MaintainenceListItem(f.getFloorID(),imc,i);
+                item.setAssignedData(temp.getAssignedData().get(i.getId()));
+                maintainencelistview.getItems().add(item);
+            }
+        }
     }
 
     private void set_Pending(PendingWorkMessage temp) {
         Platform.runLater(()->{
-            aboutComplaintWindow.setPendingTask((HashMap<String,Integer>)temp.getPendingTasks());
+            if(aboutComplaintWindow!=null)
+                aboutComplaintWindow.setPendingTask((HashMap<String,Integer>)temp.getPendingTasks());
+            if(aboutFailedMaintainenceWindow!=null)
+                aboutFailedMaintainenceWindow.setPendingTask((HashMap<String,Integer>)temp.getPendingTasks());
         });
     }
 
@@ -663,6 +699,8 @@ public class Spectator implements Initializable {
                 employees.add(w);
             if(aboutComplaintWindow!=null)
                 aboutComplaintWindow.setEmployees(employees);
+            if(aboutFailedMaintainenceWindow!=null)
+                aboutFailedMaintainenceWindow.setEmployees(employees);
         }
     }
 

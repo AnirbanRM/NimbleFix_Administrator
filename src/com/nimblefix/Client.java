@@ -81,7 +81,7 @@ public class Client {
 
     private void handleAuthentication(AuthenticationMessage authmsg) {
         if(authmsg.getSource()==AuthenticationMessage.Server&&authmsg.getMessageType()==AuthenticationMessage.Challenge){
-            authmsg = new AuthenticationMessage(AuthenticationMessage.Staff,AuthenticationMessage.Response,clientID,password);
+            authmsg = new AuthenticationMessage(AuthenticationMessage.Admin,AuthenticationMessage.Response,clientID,password);
             try{WRITER.writeUnshared(authmsg); authmsg = (AuthenticationMessage) READER.readUnshared(); }catch (Exception e){ }
             if(authmsg.getMESSAGEBODY().equals("SUCCESS"))
                 Platform.runLater(new Runnable() {

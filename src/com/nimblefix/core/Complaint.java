@@ -25,6 +25,8 @@ public class Complaint implements Serializable {
     private int problemStatus;
     private String dbID;
 
+    private byte[] locationImage = null;
+
     public static final String dateTimePattern = "yyyy-MM-dd'T'HH:mm:ssX";
 
     public class Status{
@@ -39,6 +41,14 @@ public class Complaint implements Serializable {
         this.userID = userID;
         this.userRemarks = userRemarks;
         this.complaintDateTime = complaintDateTime;
+    }
+
+    public byte[] getLocationImage() {
+        return locationImage;
+    }
+
+    public void setLocationImage(byte[] locationImage) {
+        this.locationImage = locationImage;
     }
 
     public static String getDTString(Date datetime){

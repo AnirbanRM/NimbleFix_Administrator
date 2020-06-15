@@ -218,7 +218,7 @@ public class Editor implements Initializable {
     }
 
     public void delete_inventory(MouseEvent mouseEvent) {
-        current_selected_floor.getInventories().remove(current_selected_inventory);
+        current_selected_floor.getInventories().remove(current_selected_inventory.getId());
         selectcurrentInventory(null);
         redraw();
     }
@@ -258,6 +258,12 @@ public class Editor implements Initializable {
 
     private void selectcurrentInventory(InventoryItem i){
         current_selected_inventory = i;
+
+        if(current_selected_inventory==null)
+            delete_inventory_button.setDisable(true);
+        else
+            delete_inventory_button.setDisable(false);
+
         loadintoAboutInventory(i);
         redraw();
     }

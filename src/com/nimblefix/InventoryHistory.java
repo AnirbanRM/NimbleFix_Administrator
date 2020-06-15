@@ -359,11 +359,14 @@ public class InventoryHistory implements Initializable, EventHandler<MouseEvent>
             Pane p = new Pane();
             p.setMinHeight(yDIV - 40);
             p.setMinWidth(xDIV - 20);
-            p.setBackground(new Background(new BackgroundFill(Color.valueOf("#009ABA"), new CornerRadii(10), Insets.EMPTY)));
             ArrayList<Double> dashes = new ArrayList<>();
             dashes.add(new Double(2));
             dashes.add(new Double(10));
             p.setBorder(new Border(new BorderStroke(null, null, null, Color.WHITE, null, null, null, new BorderStrokeStyle(StrokeType.INSIDE, StrokeLineJoin.BEVEL, StrokeLineCap.SQUARE, 200, 0, dashes), CornerRadii.EMPTY, new BorderWidths(0, 0, 0, 5), Insets.EMPTY)));
+            if(LocalDateTime.now().compareTo(dd)<0)
+                p.setBackground(new Background(new BackgroundFill(Color.valueOf("#009ABA"), new CornerRadii(10), Insets.EMPTY)));
+            else
+                p.setBackground(new Background(new BackgroundFill(Color.valueOf("#DD2C00"), new CornerRadii(10), Insets.EMPTY)));
 
             Label datetimeLabel = new Label();
             datetimeLabel.setLayoutX(20);
@@ -376,7 +379,10 @@ public class InventoryHistory implements Initializable, EventHandler<MouseEvent>
             statusLabel.setLayoutY(30);
             statusLabel.setFont(Font.font(null, FontWeight.BOLD, 12));
             statusLabel.setTextFill(Color.WHITE);
-            statusLabel.setText("Future preplanned Maintenance");
+            if(LocalDateTime.now().compareTo(dd)<0)
+                statusLabel.setText("Future preplanned Maintenance");
+            else
+                statusLabel.setText("Preplanned maintenance failed");
 
             p.getChildren().addAll(datetimeLabel, statusLabel);
             p.setLayoutX((dd.getMonthValue() - 1) * xDIV - 2);
