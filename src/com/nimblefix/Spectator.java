@@ -1,14 +1,12 @@
 package com.nimblefix;
 
-import com.nimblefix.ControlMessages.ComplaintMessage;
-import com.nimblefix.ControlMessages.MaintainenceMessage;
-import com.nimblefix.ControlMessages.PendingWorkMessage;
-import com.nimblefix.ControlMessages.WorkerExchangeMessage;
+import com.nimblefix.ControlMessages.*;
 import com.nimblefix.core.*;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -165,6 +163,8 @@ public class Spectator implements Initializable {
 
     AboutComplaint aboutComplaintWindow;
     AboutFailedMaintainence aboutFailedMaintainenceWindow;
+
+    boolean listen=true;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -595,23 +595,23 @@ public class Spectator implements Initializable {
 
     public void startComplaintListener () {
 
-        curr_stg.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent event) {
-                if (client.currentShowingStage.equals(curr_stg)) {
-                    try {
-                        client.clientSocket.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
+//        curr_stg.setOnCloseRequest(new EventHandler<WindowEvent>() {
+//            @Override
+//            public void handle(WindowEvent event) {
+//                if (client.currentShowingStage.equals(curr_stg)) {
+//                    try {
+//                        client.clientSocket.close();
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//        });
 
         Thread receiverthd = new Thread(new Runnable() {
             @Override
             public void run() {
-                while (true) {
+                while (listen) {
                     Object o = null;
                     o = client.readNext();
                     if (o != null) {
@@ -623,30 +623,38 @@ public class Spectator implements Initializable {
                                     handle_complaint((ComplaintMessage) temp);
                                 }
                             }).start();
-                        }
-                        else if(o instanceof WorkerExchangeMessage){
+                        } else if (o instanceof WorkerExchangeMessage) {
                             new Thread(new Runnable() {
                                 @Override
                                 public void run() {
                                     handle_workers((WorkerExchangeMessage) temp);
                                 }
                             }).start();
-                        }
-                        else if(o instanceof PendingWorkMessage){
+                        } else if (o instanceof PendingWorkMessage) {
                             new Thread(new Runnable() {
                                 @Override
                                 public void run() {
                                     set_Pending((PendingWorkMessage) temp);
                                 }
                             }).start();
-                        }
-                        else if(o instanceof MaintainenceMessage){
+                        } else if (o instanceof MaintainenceMessage) {
                             new Thread(new Runnable() {
                                 @Override
                                 public void run() {
                                     handle_Maintainence((MaintainenceMessage) temp);
                                 }
                             }).start();
+                        }
+                        else if(o instanceof MonitorMessage){
+                            listen = false;
+                            Platform.runLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        goBack();
+                                    }catch (Exception e){ }
+                                }
+                            });
                         }
                     } else
                         break;
@@ -727,23 +735,48 @@ public class Spectator implements Initializable {
 
             if (item == null || floorid == null) return;
 
-            final InventoryItem temp1 = item;
-            final String temp2 = floorid;
-            Platform.runLater(() -> {
-                complaintlistview.getItems().add(new ComplaintListItem(temp2, complaint.getComplaint(), temp1));
-            });
+            if(complaint.getBody().equals("COMPLAINT")) {
 
-            for (Object floorListItem : floorlistview.getItems()) {
-                if (((Label) (((Pane) ((FloorListItem) floorListItem).cell.getGraphic()).getChildrenUnmodifiable().get(0))).getText().equals(floorid))
-                    Platform.runLater(() -> {
-                        ((FloorListItem) floorListItem).setProblems(((FloorListItem) floorListItem).problems + 1);
-                    });
+                final InventoryItem temp1 = item;
+                final String temp2 = floorid;
+                Platform.runLater(() -> {
+                    complaintlistview.getItems().add(new ComplaintListItem(temp2, complaint.getComplaint(), temp1));
+                });
+
+                for (Object floorListItem : floorlistview.getItems()) {
+                    if (((Label) (((Pane) ((FloorListItem) floorListItem).cell.getGraphic()).getChildrenUnmodifiable().get(0))).getText().equals(floorid))
+                        Platform.runLater(() -> {
+                            ((FloorListItem) floorListItem).setProblems(((FloorListItem) floorListItem).problems + 1);
+                        });
+                }
+
+                if (isOK(item))
+                    defectiveitems.add(item);
+                if (current_selected_floor != null && current_selected_floor.equals(current_organization.getFloor(floorid)))
+                    redraw();
             }
 
-            if (isOK(item))
-                defectiveitems.add(item);
-            if (current_selected_floor != null && current_selected_floor.equals(current_organization.getFloor(floorid)))
-                redraw();
+            else if(complaint.getBody().equals("FIXED")){
+                ComplaintListItem removeItem=null;
+                for(Object temp : complaintlistview.getItems()){
+                    ComplaintListItem item1 = (ComplaintListItem) temp;
+                    if(item1.complaint.getComplaintID().equals(complaint.getComplaint().getComplaintID()))
+                        removeItem = item1;
+                }
+                if(removeItem!=null)
+                    complaintlistview.getItems().removeAll(removeItem);
+
+                for (Object floorListItem : floorlistview.getItems()) {
+                    if (((Label) (((Pane) ((FloorListItem) floorListItem).cell.getGraphic()).getChildrenUnmodifiable().get(0))).getText().equals(floorid))
+                        Platform.runLater(() -> {
+                            ((FloorListItem) floorListItem).setProblems(((FloorListItem) floorListItem).problems - 1);
+                        });
+                }
+
+                defectiveitems.remove(item);
+                if (current_selected_floor != null && current_selected_floor.equals(current_organization.getFloor(floorid)))
+                    redraw();
+            }
         }
     }
 
@@ -790,4 +823,48 @@ public class Spectator implements Initializable {
             painter.fillText("Select a floor to view.",canvas.getWidth()/2-40,canvas.getHeight()/2);
         }
     }
+
+    public void back_to_dashboard(ActionEvent actionEvent) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                MonitorMessage monitorMessage = new MonitorMessage(client.clientID, current_organization.getOui(),MonitorMessage.MessageType.CLIENT_MONITOR_STOP);
+                try {
+                    client.WRITER.writeUnshared(monitorMessage);
+                }catch (Exception e){}
+            }
+        }).start();
+    }
+
+    public void goBack() throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("DashboardUI.fxml"));
+        Parent root = loader.load();
+        Stage stage = new Stage();
+        stage.setTitle("Dashboard");
+        stage.setResizable(false);
+        stage.setScene(new Scene(root, 800, 640));
+        ((Dashboard)loader.getController()).curr_stg=stage;
+
+        StringBuilder sb = new StringBuilder();
+        for(char i : client.clientSocket.getRemoteSocketAddress().toString().substring(1).toCharArray())
+            if(i==':')break;
+            else
+                sb.append(i);
+
+        ((Dashboard)loader.getController()).setAddressandUserandClient(sb.toString(),client.clientID,client);
+
+        client.getCurrentShowingStage().hide();
+        client.setCurrentShowingStage(stage);
+
+        stage.show();
+    }
+
+    public void close(ActionEvent actionEvent) {
+        try {
+            client.clientSocket.close();
+        }catch (Exception e){}
+        curr_stg.close();
+
+    }
+
 }
