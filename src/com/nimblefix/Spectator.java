@@ -595,19 +595,6 @@ public class Spectator implements Initializable {
 
     public void startComplaintListener () {
 
-//        curr_stg.setOnCloseRequest(new EventHandler<WindowEvent>() {
-//            @Override
-//            public void handle(WindowEvent event) {
-//                if (client.currentShowingStage.equals(curr_stg)) {
-//                    try {
-//                        client.clientSocket.close();
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
-//        });
-
         Thread receiverthd = new Thread(new Runnable() {
             @Override
             public void run() {
