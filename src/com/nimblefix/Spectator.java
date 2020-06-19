@@ -706,7 +706,9 @@ public class Spectator implements Initializable {
         else if(complaint.getBody()!=null && complaint.getBody().substring(0,3).equals("GET")){
 
             for(Complaint msg : complaint.getComplaints()){
-                Platform.runLater(() -> {handle_complaint(new ComplaintMessage(msg)); });
+                ComplaintMessage cmsg = new ComplaintMessage(msg);
+                cmsg.setBody("COMPLAINT");
+                Platform.runLater(() -> {handle_complaint(cmsg); });
             }
         }
         else {
@@ -743,15 +745,21 @@ public class Spectator implements Initializable {
                     redraw();
             }
 
-            else if(complaint.getBody().equals("FIXED")){
+            if(complaint.getBody().equals("FIXED")){
                 ComplaintListItem removeItem=null;
                 for(Object temp : complaintlistview.getItems()){
                     ComplaintListItem item1 = (ComplaintListItem) temp;
                     if(item1.complaint.getComplaintID().equals(complaint.getComplaint().getComplaintID()))
                         removeItem = item1;
                 }
+                final ComplaintListItem remIt = removeItem;
                 if(removeItem!=null)
-                    complaintlistview.getItems().removeAll(removeItem);
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            complaintlistview.getItems().removeAll(remIt);
+                        }
+                    });
 
                 for (Object floorListItem : floorlistview.getItems()) {
                     if (((Label) (((Pane) ((FloorListItem) floorListItem).cell.getGraphic()).getChildrenUnmodifiable().get(0))).getText().equals(floorid))
